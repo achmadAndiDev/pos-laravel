@@ -207,24 +207,19 @@
               <a href="#" class="nav-link dropdown-toggle d-flex lh-1 text-reset p-0" data-bs-toggle="dropdown" aria-label="Open user menu">
                 <span class="avatar avatar-sm"><i class="bi bi-person-circle"></i></span>
                 <div class="d-none d-xl-block ps-2">
-                  <div> Auth::user()->name }}</div>
-                  <div class="mt-1 small text-muted">Auth::user()->role }}</div>
+                  <div>{{ Auth::user()->name ?? 'Admin' }}</div>
+                  <div class="mt-1 small text-muted">{{ Auth::user()->role ?? 'Administrator' }}</div>
                 </div>
               </a>
               <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                <a href=" route('admin.profile.index') }}" class="dropdown-item">
+                <a href="#" class="dropdown-item">
                   <i class="bi bi-person-gear me-2"></i> Profil
                 </a>
-                <a href=" route('admin.settings.index') }}" class="dropdown-item">
+                <a href="#" class="dropdown-item">
                   <i class="bi bi-gear me-2"></i> Pengaturan
                 </a>
-                {{-- Menu sliders disembunyikan sementara
-                <a href=" route('admin.sliders.index') }}" class="dropdown-item">
-                  <i class="bi bi-sliders me-2"></i> Banner
-                </a>
-                --}}
                 <div class="dropdown-divider"></div>
-                <form action=" route('logout') }}" method="POST">
+                <form action="#" method="POST">
                   @csrf
                   <button type="submit" class="dropdown-item">
                     <i class="bi bi-box-arrow-right me-2"></i> Keluar
@@ -238,51 +233,43 @@
           <div class="collapse navbar-collapse" id="navbar-menu">
             <ul class="navbar-nav">
               <li class="nav-item {{ request()->is('admin') || request()->is('admin/dashboard') ? 'active' : '' }}">
-                <a class="nav-link" href=" route('admin.dashboard') }}">
+                <a class="nav-link" href="{{ route('admin.dashboard') }}">
                   <span class="nav-link-icon d-inline-block">
                     <i class="ti ti-dashboard"></i>
                   </span>
                   <span class="nav-link-title">Dashboard</span>
                 </a>
               </li>
+              <li class="nav-item {{ request()->is('admin/outlets*') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('admin.outlets.index') }}">
+                  <span class="nav-link-icon d-inline-block">
+                    <i class="ti ti-building-store"></i>
+                  </span>
+                  <span class="nav-link-title">Outlet</span>
+                </a>
+              </li>
               <li class="nav-item {{ request()->is('admin/customers*') ? 'active' : '' }}">
-                <a class="nav-link" href=" route('admin.customers.index') }}">
+                <a class="nav-link" href="{{ route('admin.customers.index') }}" >
                   <span class="nav-link-icon d-inline-block">
                     <i class="ti ti-users"></i>
                   </span>
                   <span class="nav-link-title">Customer</span>
                 </a>
               </li>
-              <li class="nav-item {{ request()->is('admin/products/warehouses*') ? 'active' : '' }}">
-                <a class="nav-link" href=" route('admin.products.warehouses.index') }}">
+              <li class="nav-item {{ request()->is('admin/product-categories*') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('admin.product-categories.index') }}">
                   <span class="nav-link-icon d-inline-block">
-                    <i class="ti ti-building-warehouse"></i>
+                    <i class="ti ti-category"></i>
                   </span>
-                  <span class="nav-link-title">Gudang</span>
+                  <span class="nav-link-title">Kategori Produk</span>
                 </a>
               </li>
-              <li class="nav-item {{ request()->is('admin/brands*') ? 'active' : '' }}">
-                <a class="nav-link" href=" route('admin.brands.index') }}">
+              <li class="nav-item {{ request()->is('admin/products*') ? 'active' : '' }}">
+                <a class="nav-link" href="#" onclick="alert('Menu Produk belum tersedia')">
                   <span class="nav-link-icon d-inline-block">
-                    <i class="ti ti-brand-apple"></i>
-                  </span>
-                  <span class="nav-link-title">Brand</span>
-                </a>
-              </li>
-              <li class="nav-item {{ request()->is('admin/products*') && !request()->is('admin/products/warehouses*') ? 'active' : '' }}">
-                <a class="nav-link" href="/admin/products">
-                  <span class="nav-link-icon d-inline-block">
-                    <i class="ti ti-backpack"></i>
+                    <i class="ti ti-package"></i>
                   </span>
                   <span class="nav-link-title">Produk</span>
-                </a>
-              </li>
-              <li class="nav-item {{ request()->is('admin/orders*') ? 'active' : '' }}">
-                <a class="nav-link" href="/admin/orders">
-                  <span class="nav-link-icon d-inline-block">
-                    <i class="ti ti-shopping-cart"></i>
-                  </span>
-                  <span class="nav-link-title">Order</span>
                 </a>
               </li>
             </ul>
@@ -385,20 +372,38 @@
       //     },
       //   });
       // });
+      
       // Konfigurasi default untuk toastr
-      // toastr.options = {
-      //   "closeButton": true,
-      //   "progressBar": true,
-      //   "positionClass": "toast-top-right",
-      //   "showDuration": "300",
-      //   "hideDuration": "1000",
-      //   "timeOut": "5000",
-      //   "extendedTimeOut": "1000",
-      //   "showEasing": "swing",
-      //   "hideEasing": "linear",
-      //   "showMethod": "fadeIn",
-      //   "hideMethod": "fadeOut"
-      // };
+      toastr.options = {
+        "closeButton": true,
+        "progressBar": true,
+        "positionClass": "toast-top-right",
+        "showDuration": "300",
+        "hideDuration": "1000",
+        "timeOut": "5000",
+        "extendedTimeOut": "1000",
+        "showEasing": "swing",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut"
+      };
+      
+      // Show flash messages
+      @if(session('success'))
+        toastr.success('{{ session('success') }}');
+      @endif
+      
+      @if(session('error'))
+        toastr.error('{{ session('error') }}');
+      @endif
+      
+      @if(session('warning'))
+        toastr.warning('{{ session('warning') }}');
+      @endif
+      
+      @if(session('info'))
+        toastr.info('{{ session('info') }}');
+      @endif
       // Default DataTables configuration
       // $.extend(true, $.fn.dataTable.defaults, {
       //   language: {

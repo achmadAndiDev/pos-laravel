@@ -36,11 +36,11 @@
 
 @section('right-header')
 <div class="btn-list">
-  <a href="{{ route('admin.customers.create.form') }}" class="btn btn-primary d-none d-sm-inline-block">
+  <a href="{{ route('admin.customers.create') }}" class="btn btn-primary d-none d-sm-inline-block">
     <i class="ti ti-plus"></i>
     Tambah Customer
   </a>
-  <a href="{{ route('admin.customers.create.form') }}" class="btn btn-primary d-sm-none">
+  <a href="{{ route('admin.customers.create') }}" class="btn btn-primary d-sm-none">
     <i class="ti ti-plus"></i>
   </a>
 </div>
@@ -157,7 +157,7 @@
             Tambahkan customer baru untuk mulai mengelola data pelanggan Anda.
           </p>
           <div class="empty-action">
-            <a href="{{ route('admin.customers.create.form') }}" class="btn btn-primary">
+            <a href="{{ route('admin.customers.create') }}" class="btn btn-primary">
               <i class="ti ti-plus me-1"></i>
               Tambah Customer
             </a>
@@ -471,8 +471,8 @@
 
 @endsection
 
-@section('scripts')
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
   $(document).ready(function() {
     // Variables for pagination and filtering
@@ -480,9 +480,6 @@
     let perPage = 10;
     let totalPages = 0;
     let currentFilters = {};
-
-    // Load customer categories for filter and form
-    loadCustomerCategories();
 
     // Load initial data
     loadCustomers();
@@ -500,11 +497,21 @@
       }
     });
     
+    // Per page change
+    $('#perPageSelect').on('change', function() {
+      perPage = $(this).val();
+      currentPage = 1;
+      loadCustomers();
+    });
+    
     // Pagination click
     $(document).on('click', '.pagination a', function(e) {
       e.preventDefault();
-      const page = $(this).attr('href').split('page=')[1];
-      loadCustomers(page);
+      const page = $(this).data('page');
+      if (page) {
+        currentPage = page;
+        loadCustomers();
+      }
     });    
         
     // Delete Customer with SweetAlert2
@@ -530,14 +537,11 @@
             },
             success: function(response) {
               if (response.success) {
-                // Show success notification
                 Swal.fire(
                   'Terhapus!',
                   response.message,
                   'success'
                 );
-                
-                // Reload customers
                 loadCustomers();
               }
             },
@@ -552,36 +556,126 @@
         }
       });
     });
+
+    // Edit customer modal
+    $(document).on('click', '.edit-customer', function(e) {
+      e.preventDefault();
+      const customerId = $(this).data('id');
+      
+      $.ajax({
+        url: "{{ url('admin/customers') }}/" + customerId + "/edit",
+        type: "GET",
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        success: function(response) {
+          if (response.success) {
+            const customer = response.data;
+            
+            // Fill edit form
+            $('#edit_customer_id').val(customer.id);
+            $('#edit_name').val(customer.name);
+            $('#edit_phone').val(customer.phone);
+            $('#edit_email').val(customer.email);
+            $('#edit_address').val(customer.address);
+            $('#edit_birth_date').val(customer.birth_date);
+            $('#edit_gender').val(customer.gender);
+            $('#edit_status').val(customer.status);
+            $('#edit_total_points').val(customer.total_points);
+            $('#edit_notes').val(customer.notes);
+            
+            // Show modal
+            $('#editCustomerModal').modal('show');
+          }
+        },
+        error: function() {
+          Swal.fire('Error', 'Gagal memuat data customer', 'error');
+        }
+      });
+    });
+
+    // Submit edit form
+    $('#editCustomerForm').on('submit', function(e) {
+      e.preventDefault();
+      
+      const customerId = $('#edit_customer_id').val();
+      const formData = new FormData(this);
+      
+      $.ajax({
+        url: "{{ url('admin/customers') }}/" + customerId,
+        type: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+        headers: {
+          'X-CSRF-TOKEN': "{{ csrf_token() }}",
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        success: function(response) {
+          if (response.success) {
+            $('#editCustomerModal').modal('hide');
+            Swal.fire('Berhasil!', response.message, 'success');
+            loadCustomers();
+          }
+        },
+        error: function(xhr) {
+          if (xhr.status === 422) {
+            const errors = xhr.responseJSON.errors;
+            // Clear previous errors
+            $('.invalid-feedback').text('');
+            $('.form-control, .form-select').removeClass('is-invalid');
+            
+            // Show new errors
+            Object.keys(errors).forEach(function(key) {
+              $('#edit_' + key).addClass('is-invalid');
+              $('.edit-' + key + '-error').text(errors[key][0]);
+            });
+          } else {
+            Swal.fire('Error', 'Terjadi kesalahan saat menyimpan data', 'error');
+          }
+        }
+      });
+    });
         
+    /**
+     * Apply current filters
+     */
+    function applyFilters() {
+      currentFilters = {
+        search: $('#search').val(),
+        status: $('#status').val(),
+        sort_by: $('#sort_by').val()
+      };
+      currentPage = 1;
+      loadCustomers();
+    }
+    
     /**
      * Load customers with current filters and pagination
      */
     function loadCustomers() {
-      // Hide error container if visible
       $('#errorContainer').addClass('d-none');
       $('#emptyContainer').addClass('d-none');
       
-      // Show loading indicator
       showLoadingIndicator();
       
-      // Build query parameters
       const params = {
         page: currentPage,
         per_page: perPage,
         ...currentFilters
       };
       
-      // Make AJAX request
       $.ajax({
-        url: "{{ route('api.customers.index') }}",
+        url: "{{ route('admin.customers.index') }}",
         type: "GET",
         data: params,
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        },
         success: function(response) {
-          // Hide loading indicator
           hideLoadingIndicator();
           
-          // Process the response
-          if (response.data && response.data.length > 0) {
+          if (response.success && response.data && response.data.length > 0) {
             renderCustomers(response.data);
             updatePagination(response.pagination);
           } else {
@@ -589,13 +683,9 @@
           }
         },
         error: function(xhr) {
-          // Hide loading indicator
           hideLoadingIndicator();
-          
-          // Show error message
           $('#errorMessage').text('Gagal memuat data customer. Silakan coba lagi.');
           $('#errorContainer').removeClass('d-none');
-          
           console.error('Error loading customers:', xhr);
         }
       });
@@ -605,18 +695,15 @@
      * Render customers in the table
      */
     function renderCustomers(customers) {
-      // Clear existing rows
       $('#customer-list').empty();
       
-      // Loop through customers and add rows
       customers.forEach(function(customer) {
-        // Clone the template
         const template = document.getElementById('customerRowTemplate');
         const customerRow = document.importNode(template.content, true).querySelector('tr');
         
         // Set customer data
         customerRow.querySelector('.customer-name').textContent = customer.name;
-        customerRow.querySelector('.customer-id').textContent = customer.id;
+        customerRow.querySelector('.customer-id').textContent = customer.code || customer.id;
         
         // Set avatar
         const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(customer.name)}&background=1a73e8&color=fff`;
@@ -625,44 +712,25 @@
         // Contact info
         customerRow.querySelector('.customer-phone').textContent = customer.phone || '-';
         customerRow.querySelector('.customer-email').textContent = customer.email || '-';
-        
-        if (customer.line) {
-          customerRow.querySelector('.customer-line').textContent = 'Line: ' + customer.line;
-        } else {
-          customerRow.querySelector('.customer-line').textContent = '';
-        }
+        customerRow.querySelector('.customer-line').textContent = '';
         
         // Address info
         customerRow.querySelector('.customer-address').textContent = customer.address || '-';
-        customerRow.querySelector('.customer-region').textContent = customer.full_region || '-';
+        customerRow.querySelector('.customer-region').textContent = '';
+        customerRow.querySelector('.customer-postal').textContent = '';
         
-        if (customer.postal_code) {
-          customerRow.querySelector('.customer-postal').textContent = 'Kode Pos: ' + customer.postal_code;
-        } else {
-          customerRow.querySelector('.customer-postal').textContent = '';
-        }
-        
-        // Kategori Customer
-        const categoryBadge = customerRow.querySelector('.customer-category');
-        if (customer.customer_category) {
-          categoryBadge.textContent = customer.customer_category.category_name || 'Umum';
-        } else {
-          categoryBadge.textContent = 'Umum';
-        }
+        // Category
+        customerRow.querySelector('.customer-category').textContent = 'Umum';
         
         // Status
         const statusBadge = customerRow.querySelector('.customer-status');
-        if (customer.is_active === 'Y') {
+        if (customer.status === 'active') {
           statusBadge.classList.add('bg-success');
           statusBadge.textContent = 'Aktif';
-        } else if (customer.is_active === 'N') {
+        } else {
           statusBadge.classList.add('bg-danger');
           statusBadge.textContent = 'Nonaktif';
-        } else {
-          statusBadge.classList.add('bg-warning');
-          statusBadge.textContent = 'Pending';
         }
-
         statusBadge.classList.add('text-white');
         
         // Dates
@@ -673,29 +741,16 @@
           year: 'numeric'
         });
         
-        if (customer.last_order) {
-          const lastOrderDate = new Date(customer.last_order);
-          customerRow.querySelector('.customer-last-order').textContent = 'Order: ' + lastOrderDate.toLocaleDateString('id-ID', {
-            day: 'numeric',
-            month: 'short',
-            year: 'numeric'
-          });
-        } else {
-          customerRow.querySelector('.customer-last-order').textContent = '';
-        }
-        
-        // Orders count
-        customerRow.querySelector('.customer-orders-count').textContent = customer.orders_count || 0;
+        customerRow.querySelector('.customer-last-order').textContent = '';
+        customerRow.querySelector('.customer-orders-count').textContent = '0';
         
         // Action buttons
         const editButton = customerRow.querySelector('.edit-customer');
-        editButton.href = "{{ route('admin.customers.edit.form', ['id' => '__customer_id__']) }}".replace('__customer_id__', customer.id);
-        editButton.dataset.id = customer.id;
+        editButton.setAttribute('data-id', customer.id);
         
         const deleteButton = customerRow.querySelector('.delete-customer');
-        deleteButton.dataset.id = customer.id;
+        deleteButton.setAttribute('data-id', customer.id);
         
-        // Append the row to the table
         $('#customer-list').append(customerRow);
       });
     }
@@ -705,15 +760,15 @@
      */
     function updatePagination(pagination) {
       // Update pagination info
-      $('#fromItem').text(pagination.count > 0 ? (pagination.current_page - 1) * pagination.per_page + 1 : 0);
-      $('#toItem').text(Math.min(pagination.current_page * pagination.per_page, pagination.total));
-      $('#totalItems').text(pagination.total);
-      $('#currentPage').text(pagination.current_page);
-      $('#totalPages').text(pagination.total_pages);
+      $('#fromItem').text(pagination.from || 0);
+      $('#toItem').text(pagination.to || 0);
+      $('#totalItems').text(pagination.total || 0);
+      $('#currentPage').text(pagination.current_page || 1);
+      $('#totalPages').text(pagination.last_page || 1);
       
       // Update current page and total pages variables
       currentPage = pagination.current_page;
-      totalPages = pagination.total_pages;
+      totalPages = pagination.last_page;
       
       // Generate pagination links
       generatePaginationLinks(pagination);
