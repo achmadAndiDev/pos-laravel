@@ -13,72 +13,10 @@ class CustomerController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index()
     {
-        if ($request->ajax()) {
-            return $this->getCustomersData($request);
-        }
-
-        return view('admin.customers.index');
-    }
-
-    /**
-     * Get customers data for AJAX requests
-     */
-    private function getCustomersData(Request $request)
-    {
-        $query = Customer::query();
-
-        // Search functionality
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('code', 'like', "%{$search}%")
-                  ->orWhere('phone', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%");
-            });
-        }
-
-        // Status filter
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
-
-        // Sorting
-        switch ($request->sort_by) {
-            case 'name_asc':
-                $query->orderBy('name', 'asc');
-                break;
-            case 'name_desc':
-                $query->orderBy('name', 'desc');
-                break;
-            case 'newest':
-                $query->orderBy('created_at', 'desc');
-                break;
-            case 'oldest':
-                $query->orderBy('created_at', 'asc');
-                break;
-            default:
-                $query->orderBy('created_at', 'desc');
-        }
-
-        // Pagination
-        $perPage = $request->get('per_page', 10);
-        $customers = $query->paginate($perPage);
-
-        return response()->json([
-            'success' => true,
-            'data' => $customers->items(),
-            'pagination' => [
-                'current_page' => $customers->currentPage(),
-                'last_page' => $customers->lastPage(),
-                'per_page' => $customers->perPage(),
-                'total' => $customers->total(),
-                'from' => $customers->firstItem(),
-                'to' => $customers->lastItem(),
-            ]
-        ]);
+        $customers = Customer::latest()->get();
+        return view('admin.customers.index', compact('customers'));
     }
 
     /**
@@ -95,12 +33,12 @@ class CustomerController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
+            'code' => 'required|string|max:50|unique:customers,code',
             'name' => 'required|string|max:255',
-            'code' => 'nullable|string|max:50|unique:customers,code',
             'phone' => 'nullable|string|max:20',
             'email' => 'nullable|email|max:255|unique:customers,email',
             'address' => 'nullable|string',
-            'birth_date' => 'nullable|date',
+            'birth_date' => 'nullable|date|before:today',
             'gender' => 'nullable|in:male,female',
             'status' => 'required|in:active,inactive',
             'total_points' => 'nullable|numeric|min:0',
@@ -108,13 +46,6 @@ class CustomerController extends Controller
         ]);
 
         if ($validator->fails()) {
-            if ($request->ajax()) {
-                return response()->json([
-                    'success' => false,
-                    'errors' => $validator->errors()
-                ], 422);
-            }
-            
             return redirect()->back()
                 ->withErrors($validator)
                 ->withInput();
@@ -123,31 +54,21 @@ class CustomerController extends Controller
         try {
             $data = $request->all();
             
-            // Generate customer code if not provided
-            if (empty($data['code'])) {
-                $data['code'] = $this->generateCustomerCode();
+            // Set default points if not provided
+            if (!isset($data['total_points']) || $data['total_points'] === '') {
+                $data['total_points'] = 0;
             }
 
             $customer = Customer::create($data);
             
-            if ($request->ajax()) {
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Customer berhasil ditambahkan!',
-                    'data' => $customer
-                ]);
-            }
-            
             return redirect()->route('admin.customers.index')
-                ->with('success', 'Customer berhasil ditambahkan!');
+                ->with('success', "Customer {$customer->name} berhasil ditambahkan!")
+                ->with('swal_success', [
+                    'title' => 'Berhasil!',
+                    'text' => "Customer {$customer->name} berhasil ditambahkan",
+                    'icon' => 'success'
+                ]);
         } catch (\Exception $e) {
-            if ($request->ajax()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Terjadi kesalahan: ' . $e->getMessage()
-                ], 500);
-            }
-            
             return redirect()->back()
                 ->with('error', 'Terjadi kesalahan: ' . $e->getMessage())
                 ->withInput();
@@ -159,13 +80,6 @@ class CustomerController extends Controller
      */
     public function show(Customer $customer)
     {
-        if (request()->ajax()) {
-            return response()->json([
-                'success' => true,
-                'data' => $customer
-            ]);
-        }
-
         return view('admin.customers.show', compact('customer'));
     }
 
@@ -174,13 +88,6 @@ class CustomerController extends Controller
      */
     public function edit(Customer $customer)
     {
-        if (request()->ajax()) {
-            return response()->json([
-                'success' => true,
-                'data' => $customer
-            ]);
-        }
-
         return view('admin.customers.edit', compact('customer'));
     }
 
@@ -190,12 +97,12 @@ class CustomerController extends Controller
     public function update(Request $request, Customer $customer)
     {
         $validator = Validator::make($request->all(), [
+            'code' => 'required|string|max:50|unique:customers,code,' . $customer->id,
             'name' => 'required|string|max:255',
-            'code' => 'nullable|string|max:50|unique:customers,code,' . $customer->id,
             'phone' => 'nullable|string|max:20',
             'email' => 'nullable|email|max:255|unique:customers,email,' . $customer->id,
             'address' => 'nullable|string',
-            'birth_date' => 'nullable|date',
+            'birth_date' => 'nullable|date|before:today',
             'gender' => 'nullable|in:male,female',
             'status' => 'required|in:active,inactive',
             'total_points' => 'nullable|numeric|min:0',
@@ -203,13 +110,6 @@ class CustomerController extends Controller
         ]);
 
         if ($validator->fails()) {
-            if ($request->ajax()) {
-                return response()->json([
-                    'success' => false,
-                    'errors' => $validator->errors()
-                ], 422);
-            }
-            
             return redirect()->back()
                 ->withErrors($validator)
                 ->withInput();
@@ -218,31 +118,21 @@ class CustomerController extends Controller
         try {
             $data = $request->all();
             
-            // Generate customer code if not provided
-            if (empty($data['code'])) {
-                $data['code'] = $this->generateCustomerCode();
+            // Set default points if not provided
+            if (!isset($data['total_points']) || $data['total_points'] === '') {
+                $data['total_points'] = 0;
             }
 
             $customer->update($data);
             
-            if ($request->ajax()) {
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Customer berhasil diperbarui!',
-                    'data' => $customer->fresh()
-                ]);
-            }
-            
             return redirect()->route('admin.customers.index')
-                ->with('success', 'Customer berhasil diperbarui!');
+                ->with('success', "Customer {$customer->name} berhasil diperbarui!")
+                ->with('swal_success', [
+                    'title' => 'Berhasil!',
+                    'text' => "Customer {$customer->name} berhasil diperbarui",
+                    'icon' => 'success'
+                ]);
         } catch (\Exception $e) {
-            if ($request->ajax()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Terjadi kesalahan: ' . $e->getMessage()
-                ], 500);
-            }
-            
             return redirect()->back()
                 ->with('error', 'Terjadi kesalahan: ' . $e->getMessage())
                 ->withInput();
@@ -256,27 +146,19 @@ class CustomerController extends Controller
     {
         try {
             // You can add additional checks here if needed
-            // For example, check if customer has orders
+            // For example, check if customer has orders, etc.
             
+            $customerName = $customer->name;
             $customer->delete();
             
-            if (request()->ajax()) {
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Customer berhasil dihapus!'
-                ]);
-            }
-            
             return redirect()->route('admin.customers.index')
-                ->with('success', 'Customer berhasil dihapus!');
+                ->with('success', "Customer {$customerName} berhasil dihapus!")
+                ->with('swal_success', [
+                    'title' => 'Berhasil Dihapus!',
+                    'text' => "Customer {$customerName} berhasil dihapus",
+                    'icon' => 'success'
+                ]);
         } catch (\Exception $e) {
-            if (request()->ajax()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Terjadi kesalahan: ' . $e->getMessage()
-                ], 500);
-            }
-            
             return redirect()->back()
                 ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
@@ -294,27 +176,29 @@ class CustomerController extends Controller
 
             $status = $customer->status === 'active' ? 'diaktifkan' : 'dinonaktifkan';
             
-            if (request()->ajax()) {
-                return response()->json([
-                    'success' => true,
-                    'message' => "Customer berhasil {$status}!",
-                    'data' => $customer->fresh()
-                ]);
-            }
-            
             return redirect()->back()
-                ->with('success', "Customer berhasil {$status}!");
+                ->with('success', "Customer {$customer->name} berhasil {$status}!")
+                ->with('swal_success', [
+                    'title' => 'Berhasil!',
+                    'text' => "Customer {$customer->name} berhasil {$status}",
+                    'icon' => 'success'
+                ]);
         } catch (\Exception $e) {
-            if (request()->ajax()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Terjadi kesalahan: ' . $e->getMessage()
-                ], 500);
-            }
-            
             return redirect()->back()
                 ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Generate unique customer code
+     */
+    private function generateCustomerCode()
+    {
+        do {
+            $code = 'CUST' . str_pad(mt_rand(1, 9999), 4, '0', STR_PAD_LEFT);
+        } while (Customer::where('code', $code)->exists());
+        
+        return $code;
     }
 
     /**
@@ -324,29 +208,27 @@ class CustomerController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'points' => 'required|numeric|min:0.01',
-            'notes' => 'nullable|string|max:255'
+            'notes' => 'nullable|string|max:255',
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'errors' => $validator->errors()
-            ], 422);
+            return redirect()->back()
+                ->withErrors($validator);
         }
 
         try {
             $customer->addPoints($request->points);
             
-            return response()->json([
-                'success' => true,
-                'message' => 'Poin berhasil ditambahkan!',
-                'data' => $customer->fresh()
-            ]);
+            return redirect()->back()
+                ->with('success', "Berhasil menambahkan {$request->points} poin ke customer {$customer->name}!")
+                ->with('swal_success', [
+                    'title' => 'Poin Ditambahkan!',
+                    'text' => "Berhasil menambahkan {$request->points} poin ke customer {$customer->name}",
+                    'icon' => 'success'
+                ]);
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
-            ], 500);
+            return redirect()->back()
+                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
 
@@ -357,79 +239,37 @@ class CustomerController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'points' => 'required|numeric|min:0.01',
-            'notes' => 'nullable|string|max:255'
+            'notes' => 'nullable|string|max:255',
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'errors' => $validator->errors()
-            ], 422);
+            return redirect()->back()
+                ->withErrors($validator);
         }
 
         try {
             if (!$customer->hasEnoughPoints($request->points)) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Poin customer tidak mencukupi!'
-                ], 400);
+                return redirect()->back()
+                    ->with('error', 'Poin customer tidak mencukupi!')
+                    ->with('swal_error', [
+                        'title' => 'Poin Tidak Mencukupi!',
+                        'text' => "Poin customer saat ini hanya {$customer->total_points}. Tidak dapat mengurangi {$request->points} poin.",
+                        'icon' => 'error'
+                    ]);
             }
 
-            $success = $customer->deductPoints($request->points);
+            $customer->deductPoints($request->points);
             
-            if ($success) {
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Poin berhasil dikurangi!',
-                    'data' => $customer->fresh()
+            return redirect()->back()
+                ->with('success', "Berhasil mengurangi {$request->points} poin dari customer {$customer->name}!")
+                ->with('swal_success', [
+                    'title' => 'Poin Dikurangi!',
+                    'text' => "Berhasil mengurangi {$request->points} poin dari customer {$customer->name}",
+                    'icon' => 'success'
                 ]);
-            } else {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Gagal mengurangi poin!'
-                ], 400);
-            }
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
-            ], 500);
+            return redirect()->back()
+                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
-    }
-
-    /**
-     * Generate unique customer code
-     */
-    private function generateCustomerCode(): string
-    {
-        do {
-            $code = 'CUST' . str_pad(mt_rand(1, 9999), 4, '0', STR_PAD_LEFT);
-        } while (Customer::where('code', $code)->exists());
-
-        return $code;
-    }
-
-    /**
-     * Export customers data
-     */
-    public function export(Request $request)
-    {
-        // This method can be implemented later for CSV/Excel export
-        return response()->json([
-            'success' => false,
-            'message' => 'Export feature will be implemented soon'
-        ]);
-    }
-
-    /**
-     * Import customers data
-     */
-    public function import(Request $request)
-    {
-        // This method can be implemented later for CSV/Excel import
-        return response()->json([
-            'success' => false,
-            'message' => 'Import feature will be implemented soon'
-        ]);
     }
 }

@@ -97,7 +97,7 @@
                                 </td>
                             </tr>
                             @empty
-                            <tr>
+                            {{-- <tr>
                                 <td colspan="9" class="text-center py-4">
                                     <div class="empty">
                                         <div class="empty-img"><img src="{{ asset('tabler/static/illustrations/undraw_printing_invoices_5r4r.svg') }}" height="128" alt="">
@@ -114,7 +114,7 @@
                                         </div>
                                     </div>
                                 </td>
-                            </tr>
+                            </tr> --}}
                             @endforelse
                         </tbody>
                     </table>
@@ -125,7 +125,7 @@
 </div>
 @endsection
 
-@section('js')
+@section('scripts')
 <script>
 $(document).ready(function() {
     // Initialize DataTable
@@ -138,22 +138,47 @@ $(document).ready(function() {
         "order": [[5, "asc"]] // Sort by sort_order
     });
 
-    // Delete confirmation
-    $('.delete-form').on('submit', function(e) {
+    // Delete confirmation - using event delegation to work with DataTable
+    $(document).on('submit', '.delete-form', function(e) {
         e.preventDefault();
         
+        const form = this;
+        const categoryName = $(this).closest('tr').find('.font-weight-medium').text();
+        
+        console.log('Delete form submitted for category:', categoryName); // Debug
+        
         Swal.fire({
-            title: 'Apakah Anda yakin?',
-            text: "Data kategori akan dihapus permanen!",
+            title: 'Hapus Kategori?',
+            html: `Apakah Anda yakin ingin menghapus kategori <strong>${categoryName}</strong>?<br><br><small class="text-muted">Data kategori akan dihapus permanen dan tidak dapat dikembalikan!</small>`,
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Ya, Hapus!',
-            cancelButtonText: 'Batal'
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: '<i class="ti ti-trash me-1"></i>Ya, Hapus!',
+            cancelButtonText: '<i class="ti ti-x me-1"></i>Batal',
+            reverseButtons: true,
+            focusCancel: true,
+            customClass: {
+                confirmButton: 'btn btn-danger',
+                cancelButton: 'btn btn-secondary'
+            },
+            // buttonsStyling: false
         }).then((result) => {
             if (result.isConfirmed) {
-                this.submit();
+                // Show loading
+                Swal.fire({
+                    title: 'Menghapus...',
+                    text: 'Sedang menghapus data kategori',
+                    icon: 'info',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    showConfirmButton: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+                
+                form.submit();
             }
         });
     });

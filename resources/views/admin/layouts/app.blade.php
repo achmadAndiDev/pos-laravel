@@ -174,8 +174,8 @@
           <!-- Navbar Logo -->
           <div class="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pe-0 pe-md-3">
             <div style="display: flex; align-items: center;">
-              <img src="{{ asset(setting('site_logo', 'client/img/logo.png')) }}" alt="Logo" width="35px" class="me-2">
-              <span>{{ strtoupper(setting('site_name', 'Admin')) }}</span>
+              {{-- <img src="{{ asset(setting('site_logo', 'client/img/logo.png')) }}" alt="Logo" width="35px" class="me-2"> --}}
+              <span>Majeko - {{ strtoupper(setting('site_name', 'Admin')) }}</span>
             </div>
           </div>
           
@@ -265,7 +265,7 @@
                 </a>
               </li>
               <li class="nav-item {{ request()->is('admin/products*') ? 'active' : '' }}">
-                <a class="nav-link" href="#" onclick="alert('Menu Produk belum tersedia')">
+                <a class="nav-link" href="{{ route('admin.products.index') }}">
                   <span class="nav-link-icon d-inline-block">
                     <i class="ti ti-package"></i>
                   </span>
@@ -389,11 +389,35 @@
       };
       
       // Show flash messages
-      @if(session('success'))
+      @if(session('swal_success'))
+        @php $swal = session('swal_success'); @endphp
+        Swal.fire({
+          title: '{{ $swal['title'] ?? 'Berhasil!' }}',
+          text: '{{ $swal['text'] ?? '' }}',
+          icon: '{{ $swal['icon'] ?? 'success' }}',
+          confirmButtonText: 'OK',
+          customClass: {
+            confirmButton: 'btn btn-primary'
+          },
+          buttonsStyling: false
+        });
+      @elseif(session('success'))
         toastr.success('{{ session('success') }}');
       @endif
       
-      @if(session('error'))
+      @if(session('swal_error'))
+        @php $swal = session('swal_error'); @endphp
+        Swal.fire({
+          title: '{{ $swal['title'] ?? 'Error!' }}',
+          text: '{{ $swal['text'] ?? '' }}',
+          icon: '{{ $swal['icon'] ?? 'error' }}',
+          confirmButtonText: 'OK',
+          customClass: {
+            confirmButton: 'btn btn-primary'
+          },
+          buttonsStyling: false
+        });
+      @elseif(session('error'))
         toastr.error('{{ session('error') }}');
       @endif
       

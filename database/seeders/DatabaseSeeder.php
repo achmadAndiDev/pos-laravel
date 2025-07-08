@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
         // Run POS Seeder
         $this->call([
             PosSeeder::class,
+            CustomerSeeder::class,
         ]);
     }
 }
