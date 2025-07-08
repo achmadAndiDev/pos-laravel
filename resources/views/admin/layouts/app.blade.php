@@ -97,53 +97,77 @@
       .dataTables_length {
           margin-bottom: 0.5rem !important;
       }
-      
-      /* Navbar Styling */
-      @media (min-width: 768px) {
-        .navbar-collapse .navbar-nav {
-          margin: 0 auto;
-          display: flex;
-          align-items: center;
-          height: 100%;
-        }
-        
-        .navbar-collapse .navbar-nav .nav-item {
-          display: flex;
-          align-items: center;
-        }
+
+      /* Navbar Dropdown Styling */
+      .navbar-nav .dropdown-menu {
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        background-color: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 8px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        margin-top: 0.5rem;
       }
-      
-      /* Navbar Mobile Styling */
+
+      .navbar-nav .dropdown-item {
+        padding: 0.5rem 1rem;
+        color: #374151;
+        display: flex;
+        align-items: center;
+        border-radius: 6px;
+        margin: 0.125rem 0.5rem;
+        transition: all 0.15s ease-in-out;
+      }
+
+      .navbar-nav .dropdown-item:hover {
+        background-color: var(--tblr-primary);
+        color: white;
+      }
+
+      .navbar-nav .dropdown-item.active {
+        background-color: var(--tblr-primary);
+        color: white;
+        font-weight: 500;
+      }
+
+      .navbar-nav .dropdown-item .nav-link-icon {
+        width: 1.25rem;
+        height: 1.25rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* Active dropdown parent styling */
+      .navbar-nav .nav-item.dropdown.active > .nav-link {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: white;
+      }
+
+      /* Mobile dropdown styling */
       @media (max-width: 767.98px) {
-        /* .navbar-toggler {
-          border-color: rgba(255, 255, 255, 0.2);
-          color: #fff;
-          margin-right: 0.5rem;
+        .navbar-nav .dropdown-menu {
+          background-color: rgba(255, 255, 255, 0.1);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          margin-left: 1rem;
+          margin-top: 0.25rem;
+          position: static;
+          box-shadow: none;
+          backdrop-filter: none;
         }
-        
-        .navbar-toggler-icon {
-          background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
-        } */
-        
-        .navbar-collapse {
-          margin-top: 0.5rem;
-          background-color: var(--tblr-navbar-bg);
-          border-radius: 0.25rem;
-          padding: 0.5rem;
-          width: 100%;
+
+        .navbar-nav .dropdown-item {
+          color: rgba(255, 255, 255, 0.9);
+          margin: 0.125rem 0.25rem;
         }
-        
-        .navbar-collapse .navbar-nav {
-          margin: 0;
-          text-align: left;
+
+        .navbar-nav .dropdown-item:hover {
+          background-color: rgba(255, 255, 255, 0.2);
+          color: white;
         }
-        
-        .navbar-collapse .navbar-nav .nav-item {
-          margin-bottom: 0.25rem;
-        }
-        
-        .navbar-collapse .navbar-nav .nav-link {
-          padding: 0.5rem 0.75rem;
+
+        .navbar-nav .dropdown-item.active {
+          background-color: rgba(255, 255, 255, 0.3);
+          color: white;
         }
       }
     </style>
@@ -232,6 +256,7 @@
           <!-- Navbar Menu -->
           <div class="collapse navbar-collapse" id="navbar-menu">
             <ul class="navbar-nav">
+              <!-- Dashboard -->
               <li class="nav-item {{ request()->is('admin') || request()->is('admin/dashboard') ? 'active' : '' }}">
                 <a class="nav-link" href="{{ route('admin.dashboard') }}">
                   <span class="nav-link-icon d-inline-block">
@@ -240,37 +265,149 @@
                   <span class="nav-link-title">Dashboard</span>
                 </a>
               </li>
-              <li class="nav-item {{ request()->is('admin/outlets*') ? 'active' : '' }}">
-                <a class="nav-link" href="{{ route('admin.outlets.index') }}">
-                  <span class="nav-link-icon d-inline-block">
-                    <i class="ti ti-building-store"></i>
+
+              <!-- Master Data -->
+              <li class="nav-item dropdown {{ request()->is('admin/outlets*') || request()->is('admin/customers*') || request()->is('admin/product-categories*') || request()->is('admin/products*') ? 'active' : '' }}">
+                <a class="nav-link dropdown-toggle" href="#navbar-master" data-bs-toggle="dropdown" data-bs-auto-close="outside" role="button" aria-expanded="false">
+                  <span class="nav-link-icon d-md-none d-lg-inline-block">
+                    <i class="ti ti-database"></i>
                   </span>
-                  <span class="nav-link-title">Outlet</span>
+                  <span class="nav-link-title">Master Data</span>
                 </a>
+                <div class="dropdown-menu">
+                  <a class="dropdown-item {{ request()->is('admin/outlets*') ? 'active' : '' }}" href="{{ route('admin.outlets.index') }}">
+                    <span class="nav-link-icon d-inline-block me-2">
+                      <i class="ti ti-building-store"></i>
+                    </span>
+                    Outlet
+                  </a>
+                  <a class="dropdown-item {{ request()->is('admin/customers*') ? 'active' : '' }}" href="{{ route('admin.customers.index') }}">
+                    <span class="nav-link-icon d-inline-block me-2">
+                      <i class="ti ti-users"></i>
+                    </span>
+                    Customer
+                  </a>
+                  <a class="dropdown-item {{ request()->is('admin/product-categories*') ? 'active' : '' }}" href="{{ route('admin.product-categories.index') }}">
+                    <span class="nav-link-icon d-inline-block me-2">
+                      <i class="ti ti-category"></i>
+                    </span>
+                    Kategori
+                  </a>
+                  <a class="dropdown-item {{ request()->is('admin/products*') ? 'active' : '' }}" href="{{ route('admin.products.index') }}">
+                    <span class="nav-link-icon d-inline-block me-2">
+                      <i class="ti ti-package"></i>
+                    </span>
+                    Product
+                  </a>
+                </div>
               </li>
-              <li class="nav-item {{ request()->is('admin/customers*') ? 'active' : '' }}">
-                <a class="nav-link" href="{{ route('admin.customers.index') }}" >
-                  <span class="nav-link-icon d-inline-block">
-                    <i class="ti ti-users"></i>
+
+              <!-- Transaksi -->
+              <li class="nav-item dropdown {{ request()->is('admin/purchases*') || request()->is('admin/sales*') ? 'active' : '' }}">
+                <a class="nav-link dropdown-toggle" href="#navbar-transaction" data-bs-toggle="dropdown" data-bs-auto-close="outside" role="button" aria-expanded="false">
+                  <span class="nav-link-icon d-md-none d-lg-inline-block">
+                    <i class="ti ti-shopping-cart"></i>
                   </span>
-                  <span class="nav-link-title">Customer</span>
+                  <span class="nav-link-title">Transaksi</span>
                 </a>
+                <div class="dropdown-menu">
+                  <a class="dropdown-item {{ request()->is('admin/purchases*') ? 'active' : '' }}" href="{{ route('admin.purchases.index') }}">
+                    <span class="nav-link-icon d-inline-block me-2">
+                      <i class="ti ti-truck"></i>
+                    </span>
+                    Pembelian
+                  </a>
+                  <a class="dropdown-item {{ request()->is('admin/sales*') ? 'active' : '' }}" href="#" onclick="alert('Fitur Penjualan belum tersedia')">
+                    <span class="nav-link-icon d-inline-block me-2">
+                      <i class="ti ti-cash"></i>
+                    </span>
+                    Penjualan
+                  </a>
+                </div>
               </li>
-              <li class="nav-item {{ request()->is('admin/product-categories*') ? 'active' : '' }}">
-                <a class="nav-link" href="{{ route('admin.product-categories.index') }}">
-                  <span class="nav-link-icon d-inline-block">
-                    <i class="ti ti-category"></i>
+
+              <!-- Perhitungan -->
+              <li class="nav-item dropdown {{ request()->is('admin/calculations*') ? 'active' : '' }}">
+                <a class="nav-link dropdown-toggle" href="#navbar-calculation" data-bs-toggle="dropdown" data-bs-auto-close="outside" role="button" aria-expanded="false">
+                  <span class="nav-link-icon d-md-none d-lg-inline-block">
+                    <i class="ti ti-calculator"></i>
                   </span>
-                  <span class="nav-link-title">Kategori Produk</span>
+                  <span class="nav-link-title">Perhitungan</span>
                 </a>
+                <div class="dropdown-menu">
+                  <a class="dropdown-item {{ request()->is('admin/calculations/quantity*') ? 'active' : '' }}" href="#" onclick="alert('Fitur Perhitungan Jumlah belum tersedia')">
+                    <span class="nav-link-icon d-inline-block me-2">
+                      <i class="ti ti-sum"></i>
+                    </span>
+                    Jumlah Penjualan
+                  </a>
+                  <a class="dropdown-item {{ request()->is('admin/calculations/profit*') ? 'active' : '' }}" href="#" onclick="alert('Fitur Perhitungan Laba belum tersedia')">
+                    <span class="nav-link-icon d-inline-block me-2">
+                      <i class="ti ti-trending-up"></i>
+                    </span>
+                    Laba Penjualan
+                  </a>
+                </div>
               </li>
-              <li class="nav-item {{ request()->is('admin/products*') ? 'active' : '' }}">
-                <a class="nav-link" href="{{ route('admin.products.index') }}">
-                  <span class="nav-link-icon d-inline-block">
-                    <i class="ti ti-package"></i>
+
+              <!-- Laporan -->
+              <li class="nav-item dropdown {{ request()->is('admin/reports*') ? 'active' : '' }}">
+                <a class="nav-link dropdown-toggle" href="#navbar-reports" data-bs-toggle="dropdown" data-bs-auto-close="outside" role="button" aria-expanded="false">
+                  <span class="nav-link-icon d-md-none d-lg-inline-block">
+                    <i class="ti ti-file-report"></i>
                   </span>
-                  <span class="nav-link-title">Produk</span>
+                  <span class="nav-link-title">Laporan</span>
                 </a>
+                <div class="dropdown-menu">
+                  <a class="dropdown-item {{ request()->is('admin/reports/purchases*') ? 'active' : '' }}" href="#" onclick="alert('Laporan Pembelian belum tersedia')">
+                    <span class="nav-link-icon d-inline-block me-2">
+                      <i class="ti ti-truck"></i>
+                    </span>
+                    Pembelian
+                  </a>
+                  <a class="dropdown-item {{ request()->is('admin/reports/sales*') ? 'active' : '' }}" href="#" onclick="alert('Laporan Penjualan belum tersedia')">
+                    <span class="nav-link-icon d-inline-block me-2">
+                      <i class="ti ti-cash"></i>
+                    </span>
+                    Penjualan
+                  </a>
+                  <a class="dropdown-item {{ request()->is('admin/reports/profit*') ? 'active' : '' }}" href="#" onclick="alert('Laporan Laba belum tersedia')">
+                    <span class="nav-link-icon d-inline-block me-2">
+                      <i class="ti ti-trending-up"></i>
+                    </span>
+                    Laba
+                  </a>
+                </div>
+              </li>
+
+              <!-- Manajemen Akses -->
+              <li class="nav-item dropdown {{ request()->is('admin/access*') || request()->is('admin/users*') || request()->is('admin/roles*') ? 'active' : '' }}">
+                <a class="nav-link dropdown-toggle" href="#navbar-access" data-bs-toggle="dropdown" data-bs-auto-close="outside" role="button" aria-expanded="false">
+                  <span class="nav-link-icon d-md-none d-lg-inline-block">
+                    <i class="ti ti-shield-lock"></i>
+                  </span>
+                  <span class="nav-link-title">Manajemen Akses</span>
+                </a>
+                <div class="dropdown-menu">
+                  <a class="dropdown-item {{ request()->is('admin/users*') ? 'active' : '' }}" href="#" onclick="alert('Manajemen User belum tersedia')">
+                    <span class="nav-link-icon d-inline-block me-2">
+                      <i class="ti ti-user-cog"></i>
+                    </span>
+                    User
+                  </a>
+                  <a class="dropdown-item {{ request()->is('admin/roles*') ? 'active' : '' }}" href="#" onclick="alert('Manajemen Role belum tersedia')">
+                    <span class="nav-link-icon d-inline-block me-2">
+                      <i class="ti ti-key"></i>
+                    </span>
+                    Role & Permission
+                  </a>
+                  <a class="dropdown-item {{ request()->is('admin/access/logs*') ? 'active' : '' }}" href="#" onclick="alert('Log Aktivitas belum tersedia')">
+                    <span class="nav-link-icon d-inline-block me-2">
+                      <i class="ti ti-history"></i>
+                    </span>
+                    Log Aktivitas
+                  </a>
+                </div>
               </li>
             </ul>
           </div>
@@ -603,6 +740,8 @@
         toastr.warning(message, title);
       }
     </script>
+
+
     
     <!-- JS per page -->
     @yield('scripts')

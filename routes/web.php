@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\OutletController;
 use App\Http\Controllers\Admin\ProductCategoryController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\PurchaseController;
 
 Route::get('/', function () {
     return view('admin/dashboard');
@@ -19,7 +20,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     
     Route::get('/dashboard', function () {
         return view('admin.dashboard');
-    })->name('dashboard');
+    });
 
     // Outlets
     Route::resource('outlets', OutletController::class);
@@ -37,6 +38,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::delete('products/{product}/delete-image', [ProductController::class, 'deleteImage'])->name('products.delete-image');
     Route::post('products/{product}/add-stock', [ProductController::class, 'addStock'])->name('products.add-stock');
     Route::post('products/{product}/reduce-stock', [ProductController::class, 'reduceStock'])->name('products.reduce-stock');
+
+    // Purchases
+    Route::resource('purchases', PurchaseController::class);
+    Route::post('purchases/{purchase}/complete', [PurchaseController::class, 'complete'])->name('purchases.complete');
+    Route::post('purchases/{purchase}/cancel', [PurchaseController::class, 'cancel'])->name('purchases.cancel');
+    Route::get('purchases/products/by-outlet', [PurchaseController::class, 'getProductsByOutlet'])->name('purchases.products-by-outlet');
 
     // Customers
     Route::resource('customers', CustomerController::class);
