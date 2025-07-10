@@ -303,7 +303,7 @@
               </li>
 
               <!-- Transaksi -->
-              <li class="nav-item dropdown {{ request()->is('admin/purchases*') || request()->is('admin/sales*') ? 'active' : '' }}">
+              <li class="nav-item dropdown {{ request()->is('admin/purchases*') || request()->is('admin/sales*') || request()->is('admin/profit-calculation*') ? 'active' : '' }}">
                 <a class="nav-link dropdown-toggle" href="#navbar-transaction" data-bs-toggle="dropdown" data-bs-auto-close="outside" role="button" aria-expanded="false">
                   <span class="nav-link-icon d-md-none d-lg-inline-block">
                     <i class="ti ti-shopping-cart"></i>
@@ -323,29 +323,12 @@
                     </span>
                     Penjualan
                   </a>
-                </div>
-              </li>
-
-              <!-- Perhitungan -->
-              <li class="nav-item dropdown {{ request()->is('admin/calculations*') ? 'active' : '' }}">
-                <a class="nav-link dropdown-toggle" href="#navbar-calculation" data-bs-toggle="dropdown" data-bs-auto-close="outside" role="button" aria-expanded="false">
-                  <span class="nav-link-icon d-md-none d-lg-inline-block">
-                    <i class="ti ti-calculator"></i>
-                  </span>
-                  <span class="nav-link-title">Perhitungan</span>
-                </a>
-                <div class="dropdown-menu">
-                  <a class="dropdown-item {{ request()->is('admin/calculations/quantity*') ? 'active' : '' }}" href="#" onclick="alert('Fitur Perhitungan Jumlah belum tersedia')">
-                    <span class="nav-link-icon d-inline-block me-2">
-                      <i class="ti ti-sum"></i>
-                    </span>
-                    Jumlah Penjualan
-                  </a>
-                  <a class="dropdown-item {{ request()->is('admin/calculations/profit*') ? 'active' : '' }}" href="#" onclick="alert('Fitur Perhitungan Laba belum tersedia')">
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item {{ request()->is('admin/profit-calculation*') ? 'active' : '' }}" href="{{ route('admin.profit-calculation.index') }}">
                     <span class="nav-link-icon d-inline-block me-2">
                       <i class="ti ti-trending-up"></i>
                     </span>
-                    Laba Penjualan
+                    Perhitungan Laba
                   </a>
                 </div>
               </li>

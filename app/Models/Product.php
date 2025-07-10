@@ -57,11 +57,11 @@ class Product extends Model
     }
 
     /**
-     * Relationship to product category
+     * Relationship to product category (alias)
      */
     public function category(): BelongsTo
     {
-        return $this->belongsTo(ProductCategory::class);
+        return $this->productCategory();
     }
 
     /**

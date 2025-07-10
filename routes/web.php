@@ -7,6 +7,8 @@ use App\Http\Controllers\Admin\ProductCategoryController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\PurchaseController;
 use App\Http\Controllers\Admin\SaleController;
+use App\Http\Controllers\Admin\ProfitCalculationController;
+use App\Http\Controllers\Admin\SalesCalculationController;
 
 Route::get('/', function () {
     return view('admin/dashboard');
@@ -57,5 +59,15 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::post('sales/{sale}/complete', [SaleController::class, 'complete'])->name('sales.complete');
     Route::post('sales/{sale}/cancel', [SaleController::class, 'cancel'])->name('sales.cancel');
     Route::get('sales/products/by-outlet', [SaleController::class, 'getProductsByOutlet'])->name('sales.products-by-outlet');
+
+    // Sales Calculation
+    Route::get('sales-calculation', [SalesCalculationController::class, 'index'])->name('sales-calculation.index');
+    Route::get('sales-calculation/export', [SalesCalculationController::class, 'export'])->name('sales-calculation.export');
+    Route::get('sales-calculation/data', [SalesCalculationController::class, 'getData'])->name('sales-calculation.data');
+
+    // Profit Calculation
+    Route::get('profit-calculation', [ProfitCalculationController::class, 'index'])->name('profit-calculation.index');
+    Route::get('profit-calculation/export', [ProfitCalculationController::class, 'export'])->name('profit-calculation.export');
+    Route::get('profit-calculation/data', [ProfitCalculationController::class, 'getData'])->name('profit-calculation.data');
 
 });
