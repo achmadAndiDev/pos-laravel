@@ -57,6 +57,14 @@ class Product extends Model
     }
 
     /**
+     * Relationship to product category
+     */
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(ProductCategory::class);
+    }
+
+    /**
      * Scope for active products
      */
     public function scopeActive($query)

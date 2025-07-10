@@ -317,7 +317,7 @@
                     </span>
                     Pembelian
                   </a>
-                  <a class="dropdown-item {{ request()->is('admin/sales*') ? 'active' : '' }}" href="#" onclick="alert('Fitur Penjualan belum tersedia')">
+                  <a class="dropdown-item {{ request()->is('admin/sales*') ? 'active' : '' }}" href="{{ route('admin.sales.index') }}">
                     <span class="nav-link-icon d-inline-block me-2">
                       <i class="ti ti-cash"></i>
                     </span>

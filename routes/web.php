@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\OutletController;
 use App\Http\Controllers\Admin\ProductCategoryController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\PurchaseController;
+use App\Http\Controllers\Admin\SaleController;
 
 Route::get('/', function () {
     return view('admin/dashboard');
@@ -50,5 +51,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::patch('customers/{customer}/toggle-status', [CustomerController::class, 'toggleStatus'])->name('customers.toggle-status');
     Route::post('customers/{customer}/add-points', [CustomerController::class, 'addPoints'])->name('customers.add-points');
     Route::post('customers/{customer}/deduct-points', [CustomerController::class, 'deductPoints'])->name('customers.deduct-points');
+
+    // Sales
+    Route::resource('sales', SaleController::class);
+    Route::post('sales/{sale}/complete', [SaleController::class, 'complete'])->name('sales.complete');
+    Route::post('sales/{sale}/cancel', [SaleController::class, 'cancel'])->name('sales.cancel');
+    Route::get('sales/products/by-outlet', [SaleController::class, 'getProductsByOutlet'])->name('sales.products-by-outlet');
 
 });
