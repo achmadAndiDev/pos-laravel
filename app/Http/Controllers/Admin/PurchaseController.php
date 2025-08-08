@@ -10,6 +10,7 @@ use App\Models\Outlet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class PurchaseController extends Controller
 {
@@ -297,5 +298,139 @@ class PurchaseController extends Controller
             });
 
         return response()->json($products);
+    }
+
+    /**
+     * Display purchase report
+     */
+    public function report(Request $request)
+    {
+        $query = Purchase::with(['outlet', 'purchaseItems.product']);
+
+        // Filter by outlet
+        if ($request->filled('outlet_id')) {
+            $query->where('outlet_id', $request->outlet_id);
+        }
+
+        // Filter by status
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        // Filter by date range
+        if ($request->filled('start_date')) {
+            $query->whereDate('purchase_date', '>=', $request->start_date);
+        }
+        if ($request->filled('end_date')) {
+            $query->whereDate('purchase_date', '<=', $request->end_date);
+        }
+
+        // Filter by supplier
+        if ($request->filled('supplier_name')) {
+            $query->where('supplier_name', 'like', '%' . $request->supplier_name . '%');
+        }
+
+        $purchases = $query->orderBy('purchase_date', 'desc')->get();
+
+        // Calculate totals
+        $totalPurchases = $purchases->count();
+        $totalAmount = $purchases->sum('total_amount');
+        $completedPurchases = $purchases->where('status', 'completed')->count();
+        $draftPurchases = $purchases->where('status', 'draft')->count();
+
+        $outlets = Outlet::active()->get();
+
+        return view('admin.purchases.report', compact(
+            'purchases', 
+            'outlets', 
+            'totalPurchases', 
+            'totalAmount', 
+            'completedPurchases', 
+            'draftPurchases'
+        ));
+    }
+
+    /**
+     * Print purchase report
+     */
+    public function printReport(Request $request)
+    {
+        $query = Purchase::with(['outlet', 'purchaseItems.product']);
+
+        // Apply same filters as report
+        if ($request->filled('outlet_id')) {
+            $query->where('outlet_id', $request->outlet_id);
+        }
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+        if ($request->filled('start_date')) {
+            $query->whereDate('purchase_date', '>=', $request->start_date);
+        }
+        if ($request->filled('end_date')) {
+            $query->whereDate('purchase_date', '<=', $request->end_date);
+        }
+        if ($request->filled('supplier_name')) {
+            $query->where('supplier_name', 'like', '%' . $request->supplier_name . '%');
+        }
+
+        $purchases = $query->orderBy('purchase_date', 'desc')->get();
+
+        // Calculate totals
+        $totalPurchases = $purchases->count();
+        $totalAmount = $purchases->sum('total_amount');
+        $completedPurchases = $purchases->where('status', 'completed')->count();
+        $draftPurchases = $purchases->where('status', 'draft')->count();
+
+        return view('admin.purchases.print', compact(
+            'purchases', 
+            'totalPurchases', 
+            'totalAmount', 
+            'completedPurchases', 
+            'draftPurchases'
+        ));
+    }
+
+    /**
+     * Export purchase report to PDF
+     */
+    public function exportPdf(Request $request)
+    {
+        $query = Purchase::with(['outlet', 'purchaseItems.product']);
+
+        // Apply same filters as report
+        if ($request->filled('outlet_id')) {
+            $query->where('outlet_id', $request->outlet_id);
+        }
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+        if ($request->filled('start_date')) {
+            $query->whereDate('purchase_date', '>=', $request->start_date);
+        }
+        if ($request->filled('end_date')) {
+            $query->whereDate('purchase_date', '<=', $request->end_date);
+        }
+        if ($request->filled('supplier_name')) {
+            $query->where('supplier_name', 'like', '%' . $request->supplier_name . '%');
+        }
+
+        $purchases = $query->orderBy('purchase_date', 'desc')->get();
+
+        // Calculate totals
+        $totalPurchases = $purchases->count();
+        $totalAmount = $purchases->sum('total_amount');
+        $completedPurchases = $purchases->where('status', 'completed')->count();
+        $draftPurchases = $purchases->where('status', 'draft')->count();
+
+        $pdf = Pdf::loadView('admin.purchases.pdf', compact(
+            'purchases', 
+            'totalPurchases', 
+            'totalAmount', 
+            'completedPurchases', 
+            'draftPurchases'
+        ));
+
+        return $pdf->download('laporan-pembelian-' . date('Y-m-d') . '.pdf');
     }
 }

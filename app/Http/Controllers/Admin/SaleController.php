@@ -11,6 +11,7 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class SaleController extends Controller
 {
@@ -325,9 +326,167 @@ class SaleController extends Controller
                     'selling_price' => $product->selling_price,
                     'stock' => $product->stock,
                     'unit' => $product->unit,
+                    'image' => $product->image,
                 ];
             });
 
         return response()->json($products);
+    }
+
+    /**
+     * Display sales report
+     */
+    public function report(Request $request)
+    {
+        $query = Sale::with(['outlet', 'customer', 'saleItems.product']);
+
+        // Filter by outlet
+        if ($request->filled('outlet_id')) {
+            $query->where('outlet_id', $request->outlet_id);
+        }
+
+        // Filter by status
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        // Filter by date range
+        if ($request->filled('start_date')) {
+            $query->whereDate('sale_date', '>=', $request->start_date);
+        }
+        if ($request->filled('end_date')) {
+            $query->whereDate('sale_date', '<=', $request->end_date);
+        }
+
+        // Filter by customer
+        if ($request->filled('customer_name')) {
+            $query->whereHas('customer', function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->customer_name . '%');
+            });
+        }
+
+        // Filter by payment method
+        if ($request->filled('payment_method')) {
+            $query->where('payment_method', $request->payment_method);
+        }
+
+        $sales = $query->orderBy('sale_date', 'desc')->get();
+
+        // Calculate totals
+        $totalSales = $sales->count();
+        $totalAmount = $sales->sum('total_amount');
+        $totalPaidAmount = $sales->sum('paid_amount');
+        $completedSales = $sales->where('status', 'completed')->count();
+        $draftSales = $sales->where('status', 'draft')->count();
+
+        $outlets = Outlet::active()->get();
+
+        return view('admin.sales.report', compact(
+            'sales', 
+            'outlets', 
+            'totalSales', 
+            'totalAmount', 
+            'totalPaidAmount',
+            'completedSales', 
+            'draftSales'
+        ));
+    }
+
+    /**
+     * Print sales report
+     */
+    public function printReport(Request $request)
+    {
+        $query = Sale::with(['outlet', 'customer', 'saleItems.product']);
+
+        // Apply same filters as report
+        if ($request->filled('outlet_id')) {
+            $query->where('outlet_id', $request->outlet_id);
+        }
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+        if ($request->filled('start_date')) {
+            $query->whereDate('sale_date', '>=', $request->start_date);
+        }
+        if ($request->filled('end_date')) {
+            $query->whereDate('sale_date', '<=', $request->end_date);
+        }
+        if ($request->filled('customer_name')) {
+            $query->whereHas('customer', function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->customer_name . '%');
+            });
+        }
+        if ($request->filled('payment_method')) {
+            $query->where('payment_method', $request->payment_method);
+        }
+
+        $sales = $query->orderBy('sale_date', 'desc')->get();
+
+        // Calculate totals
+        $totalSales = $sales->count();
+        $totalAmount = $sales->sum('total_amount');
+        $totalPaidAmount = $sales->sum('paid_amount');
+        $completedSales = $sales->where('status', 'completed')->count();
+        $draftSales = $sales->where('status', 'draft')->count();
+
+        return view('admin.sales.print', compact(
+            'sales', 
+            'totalSales', 
+            'totalAmount', 
+            'totalPaidAmount',
+            'completedSales', 
+            'draftSales'
+        ));
+    }
+
+    /**
+     * Export sales report to PDF
+     */
+    public function exportPdf(Request $request)
+    {
+        $query = Sale::with(['outlet', 'customer', 'saleItems.product']);
+
+        // Apply same filters as report
+        if ($request->filled('outlet_id')) {
+            $query->where('outlet_id', $request->outlet_id);
+        }
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+        if ($request->filled('start_date')) {
+            $query->whereDate('sale_date', '>=', $request->start_date);
+        }
+        if ($request->filled('end_date')) {
+            $query->whereDate('sale_date', '<=', $request->end_date);
+        }
+        if ($request->filled('customer_name')) {
+            $query->whereHas('customer', function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->customer_name . '%');
+            });
+        }
+        if ($request->filled('payment_method')) {
+            $query->where('payment_method', $request->payment_method);
+        }
+
+        $sales = $query->orderBy('sale_date', 'desc')->get();
+
+        // Calculate totals
+        $totalSales = $sales->count();
+        $totalAmount = $sales->sum('total_amount');
+        $totalPaidAmount = $sales->sum('paid_amount');
+        $completedSales = $sales->where('status', 'completed')->count();
+        $draftSales = $sales->where('status', 'draft')->count();
+
+        $pdf = Pdf::loadView('admin.sales.pdf', compact(
+            'sales', 
+            'totalSales', 
+            'totalAmount', 
+            'totalPaidAmount',
+            'completedSales', 
+            'draftSales'
+        ));
+
+        return $pdf->download('laporan-penjualan-' . date('Y-m-d') . '.pdf');
     }
 }

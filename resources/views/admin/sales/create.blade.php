@@ -100,25 +100,12 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-vcenter" id="itemsTable">
-                            <thead>
-                                <tr>
-                                    <th width="35%">Produk</th>
-                                    <th width="15%">Harga</th>
-                                    <th width="20%">Jumlah</th>
-                                    <th width="20%">Total</th>
-                                    <th width="10%">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody id="itemsTableBody">
-                                <tr id="emptyRow">
-                                    <td colspan="5" class="text-center text-muted py-4">
-                                        Belum ada item dipilih
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <div id="itemsContainer">
+                        <div id="emptyState" class="text-center text-muted py-5">
+                            <i class="ti ti-shopping-cart-off fs-1 mb-3 text-muted"></i>
+                            <h4 class="text-muted">Belum ada item dipilih</h4>
+                            <p class="text-muted">Pilih produk dari daftar di atas untuk menambahkan ke keranjang</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -259,6 +246,167 @@
 </form>
 @endsection
 
+@section('css')
+<style>
+    .item-card {
+        border: 1px solid #e9ecef;
+        transition: all 0.2s ease;
+    }
+    
+    .item-card:hover {
+        border-color: #0d6efd;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    }
+    
+    .item-card .card-body {
+        padding: 1rem;
+    }
+    
+    .item-card .form-label {
+        font-weight: 500;
+        margin-bottom: 0.25rem;
+    }
+    
+    .item-card .input-group-sm .form-control {
+        font-size: 0.875rem;
+    }
+    
+    .item-card .qty-btn {
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .item-card .total-price {
+        font-size: 1.1rem;
+        font-weight: 600;
+    }
+    
+    #emptyState {
+        min-height: 200px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    #emptyState i {
+        opacity: 0.5;
+    }
+    
+    /* Product Card Styles */
+    .product-card {
+        transition: all 0.2s ease;
+        height: 100%;
+    }
+    
+    .product-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    .product-card.border-primary {
+        border-color: #0d6efd !important;
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+    }
+    
+    /* Product Image Styles */
+    .product-image-container {
+        position: relative;
+        width: 100%;
+        height: 120px;
+        border-radius: 6px;
+        overflow: hidden;
+        background-color: #f8f9fa;
+    }
+    
+    .product-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 6px;
+        transition: transform 0.2s ease;
+    }
+    
+    .product-card:hover .product-image {
+        transform: scale(1.05);
+    }
+    
+    .product-image-placeholder {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #f8f9fa;
+        border: 2px dashed #dee2e6;
+        border-radius: 6px;
+        color: #6c757d;
+    }
+    
+    .product-image-placeholder i {
+        font-size: 2rem;
+        opacity: 0.5;
+    }
+    
+    /* Product Card Content */
+    .product-card .card-title {
+        font-size: 0.9rem;
+        font-weight: 600;
+        line-height: 1.2;
+    }
+    
+    .product-card .badge {
+        font-size: 0.7rem;
+        padding: 0.25rem 0.5rem;
+    }
+    
+    .product-card .text-muted.small {
+        font-size: 0.75rem;
+        line-height: 1.2;
+    }
+    
+    @media (max-width: 768px) {
+        .item-card .card-body {
+            padding: 0.75rem;
+        }
+        
+        .item-card .total-price {
+            font-size: 1rem;
+        }
+        
+        .item-card .form-label {
+            font-size: 0.8rem;
+        }
+        
+        .product-image-container {
+            height: 100px;
+        }
+        
+        .product-card .card-title {
+            font-size: 0.85rem;
+        }
+        
+        .product-card .text-muted.small {
+            font-size: 0.7rem;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .product-image-container {
+            height: 80px;
+        }
+        
+        .product-card .card-body {
+            padding: 0.75rem;
+        }
+    }
+</style>
+@endsection
+
 @section('scripts')
 <script>
 $(document).ready(function() {
@@ -306,13 +454,40 @@ $(document).ready(function() {
         } else {
             productsToShow.forEach(function(product) {
                 const isSelected = selectedItems[product.id] ? 'border-primary' : '';
+                
+                // Handle product image
+                let imageHtml = '';
+                if (product.image && product.image !== '' && product.image !== null) {
+                    // If product has image, display it
+                    const imageUrl = product.image.startsWith('http') ? product.image : `/storage/products/${product.image}`;
+                    imageHtml = `
+                        <div class="product-image-container mb-2">
+                            <img src="${imageUrl}" alt="${product.name}" class="product-image" 
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <div class="product-image-placeholder" style="display: none;">
+                                <i class="ti ti-photo"></i>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    // If no image, show placeholder
+                    imageHtml = `
+                        <div class="product-image-container mb-2">
+                            <div class="product-image-placeholder">
+                                <i class="ti ti-photo"></i>
+                            </div>
+                        </div>
+                    `;
+                }
+                
                 html += `
-                    <div class="col-md-4 col-sm-6 mb-3">
+                    <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
                         <div class="card product-card ${isSelected}" data-product-id="${product.id}" style="cursor: pointer;">
                             <div class="card-body p-3">
+                                ${imageHtml}
                                 <div class="d-flex justify-content-between align-items-start mb-2">
-                                    <h6 class="card-title mb-1">${product.name}</h6>
-                                    <span class="badge bg-secondary">${product.stock} ${product.unit}</span>
+                                    <h6 class="card-title mb-1" title="${product.name}">${product.name.length > 20 ? product.name.substring(0, 20) + '...' : product.name}</h6>
+                                    <span class="badge bg-secondary text-white">${product.stock} ${product.unit}</span>
                                 </div>
                                 <p class="text-muted small mb-1">${product.code}</p>
                                 <p class="text-muted small mb-2">${product.category}</p>
@@ -376,64 +551,88 @@ $(document).ready(function() {
         updateButtons();
     }
 
-    // Add item row
+    // Add item card
     function addItemRow(product) {
-        $('#emptyRow').hide();
+        $('#emptyState').hide();
         
-        const row = `
-            <tr data-product-id="${product.id}">
-                <td>
-                    <div class="text-reset">${product.name}</div>
-                    <div class="text-muted small">${product.code}</div>
-                    <input type="hidden" name="items[${itemIndex}][product_id]" value="${product.id}">
-                </td>
-                <td>
-                    <div class="input-group">
-                        <span class="input-group-text">Rp</span>
-                        <input type="number" name="items[${itemIndex}][unit_price]" class="form-control price-input" 
-                               value="${product.selling_price}" min="0" step="0.01" required>
+        const card = `
+            <div class="card mb-3 item-card" data-product-id="${product.id}">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <!-- Product Info -->
+                        <div class="col-12 col-md-4 mb-3 mb-md-0">
+                            <div class="d-flex align-items-center">
+                                <div class="flex-fill">
+                                    <h6 class="mb-1">${product.name}</h6>
+                                    <small class="text-muted">${product.code}</small>
+                                    <input type="hidden" name="items[${itemIndex}][product_id]" value="${product.id}">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Price -->
+                        <div class="col-6 col-md-2 mb-3 mb-md-0">
+                            <label class="form-label small text-muted mb-1">Harga</label>
+                            <div class="input-group input-group-sm">
+                                <span class="input-group-text">Rp</span>
+                                <input type="number" name="items[${itemIndex}][unit_price]" class="form-control price-input" 
+                                       value="${product.selling_price}" min="0" step="0.01" required>
+                            </div>
+                        </div>
+                        
+                        <!-- Quantity -->
+                        <div class="col-6 col-md-3 mb-3 mb-md-0">
+                            <label class="form-label small text-muted mb-1">Jumlah</label>
+                            <div class="input-group input-group-sm">
+                                <button type="button" class="btn btn-outline-secondary qty-btn" data-action="decrease">
+                                    <i class="ti ti-minus"></i>
+                                </button>
+                                <input type="number" name="items[${itemIndex}][quantity]" class="form-control quantity-input text-center" 
+                                       value="1" min="1" max="${product.stock}" required>
+                                <button type="button" class="btn btn-outline-secondary qty-btn" data-action="increase">
+                                    <i class="ti ti-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Total & Actions -->
+                        <div class="col-12 col-md-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <label class="form-label small text-muted mb-1 d-block d-md-none">Total</label>
+                                    <strong class="total-price text-primary fs-5">${formatCurrency(product.selling_price)}</strong>
+                                </div>
+                                <button type="button" class="btn btn-sm btn-outline-danger remove-item ms-2">
+                                    <i class="ti ti-trash"></i>
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                </td>
-                <td>
-                    <div class="input-group">
-                        <button type="button" class="btn btn-outline-secondary qty-btn" data-action="decrease">-</button>
-                        <input type="number" name="items[${itemIndex}][quantity]" class="form-control quantity-input text-center" 
-                               value="1" min="1" max="${product.stock}" required>
-                        <button type="button" class="btn btn-outline-secondary qty-btn" data-action="increase">+</button>
-                    </div>
-                </td>
-                <td>
-                    <strong class="total-price">${formatCurrency(product.selling_price)}</strong>
-                </td>
-                <td>
-                    <button type="button" class="btn btn-sm btn-outline-danger remove-item">
-                        <i class="ti ti-trash"></i>
-                    </button>
-                </td>
-            </tr>
+                </div>
+            </div>
         `;
 
-        $('#itemsTableBody').append(row);
+        $('#itemsContainer').append(card);
         itemIndex++;
     }
 
-    // Update item row
+    // Update item card
     function updateItemRow(productId) {
         const item = selectedItems[productId];
-        const row = $(`tr[data-product-id="${productId}"]`);
+        const card = $(`.item-card[data-product-id="${productId}"]`);
         
-        row.find('.quantity-input').val(item.quantity);
-        row.find('.price-input').val(item.unit_price);
+        card.find('.quantity-input').val(item.quantity);
+        card.find('.price-input').val(item.unit_price);
         
         const total = item.quantity * item.unit_price;
-        row.find('.total-price').text(formatCurrency(total));
+        card.find('.total-price').text(formatCurrency(total));
     }
 
     // Quantity buttons
     $(document).on('click', '.qty-btn', function() {
         const action = $(this).data('action');
         const input = $(this).siblings('.quantity-input');
-        const productId = $(this).closest('tr').data('product-id');
+        const productId = $(this).closest('.item-card').data('product-id');
         const product = products.find(p => p.id == productId);
         let currentVal = parseInt(input.val()) || 1;
         
@@ -446,18 +645,18 @@ $(document).ready(function() {
         input.val(currentVal);
         selectedItems[productId].quantity = currentVal;
         
-        calculateRowTotal($(this).closest('tr'));
+        calculateRowTotal($(this).closest('.item-card'));
     });
 
     // Remove item
     $(document).on('click', '.remove-item', function() {
-        const productId = $(this).closest('tr').data('product-id');
+        const productId = $(this).closest('.item-card').data('product-id');
         delete selectedItems[productId];
         
-        $(this).closest('tr').remove();
+        $(this).closest('.item-card').remove();
         
         if (Object.keys(selectedItems).length === 0) {
-            $('#emptyRow').show();
+            $('#emptyState').show();
         }
         
         displayProducts(products.filter(p => $('#productSearch').val() === '' || 
@@ -473,8 +672,8 @@ $(document).ready(function() {
     $('#clearAllBtn').click(function() {
         if (confirm('Yakin ingin menghapus semua item?')) {
             selectedItems = {};
-            $('#itemsTableBody tr:not(#emptyRow)').remove();
-            $('#emptyRow').show();
+            $('.item-card').remove();
+            $('#emptyState').show();
             displayProducts(products);
             updateSummary();
             updateButtons();
@@ -483,8 +682,8 @@ $(document).ready(function() {
 
     // Quantity or price change
     $(document).on('input', '.quantity-input, .price-input', function() {
-        const row = $(this).closest('tr');
-        const productId = row.data('product-id');
+        const card = $(this).closest('.item-card');
+        const productId = card.data('product-id');
         
         if ($(this).hasClass('quantity-input')) {
             selectedItems[productId].quantity = parseInt($(this).val()) || 1;
@@ -492,7 +691,7 @@ $(document).ready(function() {
             selectedItems[productId].unit_price = parseFloat($(this).val()) || 0;
         }
         
-        calculateRowTotal(row);
+        calculateRowTotal(card);
     });
 
     // Tax or discount change
@@ -566,8 +765,8 @@ $(document).ready(function() {
     // Clear all items
     function clearItems() {
         selectedItems = {};
-        $('#itemsTableBody tr:not(#emptyRow)').remove();
-        $('#emptyRow').show();
+        $('.item-card').remove();
+        $('#emptyState').show();
         updateSummary();
         updateButtons();
     }

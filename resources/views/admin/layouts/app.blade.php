@@ -334,7 +334,7 @@
               </li>
 
               <!-- Laporan -->
-              <li class="nav-item dropdown {{ request()->is('admin/reports*') ? 'active' : '' }}">
+              <li class="nav-item dropdown {{ request()->is('admin/report*') || request()->is('admin/reports*') ? 'active' : '' }}">
                 <a class="nav-link dropdown-toggle" href="#navbar-reports" data-bs-toggle="dropdown" data-bs-auto-close="outside" role="button" aria-expanded="false">
                   <span class="nav-link-icon d-md-none d-lg-inline-block">
                     <i class="ti ti-file-report"></i>
@@ -342,19 +342,19 @@
                   <span class="nav-link-title">Laporan</span>
                 </a>
                 <div class="dropdown-menu">
-                  <a class="dropdown-item {{ request()->is('admin/reports/purchases*') ? 'active' : '' }}" href="#" onclick="alert('Laporan Pembelian belum tersedia')">
+                  <a class="dropdown-item {{ request()->is('admin/report/purchases*') ? 'active' : '' }}" href="{{ route('admin.purchases.report') }}">
                     <span class="nav-link-icon d-inline-block me-2">
                       <i class="ti ti-truck"></i>
                     </span>
                     Pembelian
                   </a>
-                  <a class="dropdown-item {{ request()->is('admin/reports/sales*') ? 'active' : '' }}" href="#" onclick="alert('Laporan Penjualan belum tersedia')">
+                  <a class="dropdown-item {{ request()->is('admin/report/sales*') ? 'active' : '' }}" href="{{ route('admin.sales.report') }}">
                     <span class="nav-link-icon d-inline-block me-2">
                       <i class="ti ti-cash"></i>
                     </span>
                     Penjualan
                   </a>
-                  <a class="dropdown-item {{ request()->is('admin/reports/profit*') ? 'active' : '' }}" href="#" onclick="alert('Laporan Laba belum tersedia')">
+                  <a class="dropdown-item {{ request()->is('admin/report/profit*') ? 'active' : '' }}" href="{{ route('admin.profit-calculation.report') }}">
                     <span class="nav-link-icon d-inline-block me-2">
                       <i class="ti ti-trending-up"></i>
                     </span>

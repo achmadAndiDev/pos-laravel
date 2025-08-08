@@ -10,6 +10,7 @@ use App\Models\Outlet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ProfitCalculationController extends Controller
 {
@@ -286,5 +287,71 @@ class ProfitCalculationController extends Controller
         $profitData = $this->calculateProfit($startDate, $endDate, $outletId);
 
         return response()->json($profitData);
+    }
+
+    /**
+     * Display profit report
+     */
+    public function report(Request $request)
+    {
+        $outlets = Outlet::where('status', 'active')->get();
+        
+        // Default date range (current month)
+        $startDate = $request->get('start_date', Carbon::now()->startOfMonth()->format('Y-m-d'));
+        $endDate = $request->get('end_date', Carbon::now()->endOfMonth()->format('Y-m-d'));
+        $outletId = $request->get('outlet_id');
+        
+        // Get profit data
+        $profitData = $this->calculateProfit($startDate, $endDate, $outletId);
+        
+        return view('admin.profit-calculation.report', compact(
+            'outlets', 
+            'profitData', 
+            'startDate', 
+            'endDate', 
+            'outletId'
+        ));
+    }
+
+    /**
+     * Print profit report
+     */
+    public function printReport(Request $request)
+    {
+        $startDate = $request->get('start_date', Carbon::now()->startOfMonth()->format('Y-m-d'));
+        $endDate = $request->get('end_date', Carbon::now()->endOfMonth()->format('Y-m-d'));
+        $outletId = $request->get('outlet_id');
+        
+        // Get profit data
+        $profitData = $this->calculateProfit($startDate, $endDate, $outletId);
+        
+        return view('admin.profit-calculation.print', compact(
+            'profitData', 
+            'startDate', 
+            'endDate', 
+            'outletId'
+        ));
+    }
+
+    /**
+     * Export profit report to PDF
+     */
+    public function exportPdf(Request $request)
+    {
+        $startDate = $request->get('start_date', Carbon::now()->startOfMonth()->format('Y-m-d'));
+        $endDate = $request->get('end_date', Carbon::now()->endOfMonth()->format('Y-m-d'));
+        $outletId = $request->get('outlet_id');
+        
+        // Get profit data
+        $profitData = $this->calculateProfit($startDate, $endDate, $outletId);
+        
+        $pdf = Pdf::loadView('admin.profit-calculation.pdf', compact(
+            'profitData', 
+            'startDate', 
+            'endDate', 
+            'outletId'
+        ));
+
+        return $pdf->download('laporan-laba-' . $startDate . '-to-' . $endDate . '.pdf');
     }
 }
