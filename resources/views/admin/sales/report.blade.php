@@ -19,7 +19,57 @@
         border-radius: 8px;
         overflow: hidden;
         box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
     }
+    
+    /* Optimasi tabel untuk mobile */
+    #salesTable {
+        min-width: 900px; /* Minimum width untuk memastikan tabel tidak terlalu sempit */
+    }
+    
+    #salesTable th,
+    #salesTable td {
+        white-space: nowrap;
+        vertical-align: middle;
+    }
+    
+    /* Kolom yang bisa dibuat lebih fleksibel */
+    #salesTable th:nth-child(4), /* Outlet */
+    #salesTable td:nth-child(4) {
+        min-width: 120px;
+        white-space: normal;
+        word-wrap: break-word;
+    }
+    
+    #salesTable th:nth-child(5), /* Customer */
+    #salesTable td:nth-child(5) {
+        min-width: 130px;
+        white-space: normal;
+        word-wrap: break-word;
+    }
+    
+    /* Responsive untuk mobile */
+    @media (max-width: 768px) {
+        .table-responsive {
+            font-size: 0.875rem;
+        }
+        
+        #salesTable th,
+        #salesTable td {
+            padding: 0.5rem 0.25rem;
+        }
+        
+        .btn-list .btn {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+        }
+        
+        .card-actions {
+            font-size: 0.75rem;
+        }
+    }
+    
     @media print {
         .no-print {
             display: none !important;
@@ -33,6 +83,14 @@
         .card {
             border: none !important;
             box-shadow: none !important;
+        }
+        
+        .table-responsive {
+            overflow: visible !important;
+        }
+        
+        #salesTable {
+            min-width: auto !important;
         }
     }
 </style>
@@ -206,33 +264,21 @@
                         <tr>
                             <td>{{ $index + 1 }}</td>
                             <td>
-                                <div class="d-flex py-1 align-items-center">
-                                    <div class="flex-fill">
-                                        <div class="font-weight-medium">{{ $sale->code }}</div>
-                                        <div class="text-muted">{{ $sale->created_at->format('H:i') }}</div>
-                                    </div>
-                                </div>
+                                <div class="font-weight-medium">{{ $sale->code }}</div>
+                                <div class="text-muted small">{{ $sale->created_at->format('H:i') }}</div>
                             </td>
                             <td>
                                 <div>{{ $sale->sale_date->format('d/m/Y') }}</div>
                                 <div class="text-muted">{{ $sale->created_at->format('H:i') }}</div>
                             </td>
                             <td>
-                                <div class="d-flex py-1 align-items-center">
-                                    <div class="flex-fill">
-                                        <div class="font-weight-medium">{{ $sale->outlet->name }}</div>
-                                        <div class="text-muted">{{ Str::limit($sale->outlet->address, 30) }}</div>
-                                    </div>
-                                </div>
+                                <div class="font-weight-medium">{{ $sale->outlet->name }}</div>
+                                <div class="text-muted small">{{ Str::limit($sale->outlet->address, 30) }}</div>
                             </td>
                             <td>
                                 @if($sale->customer)
-                                    <div class="d-flex py-1 align-items-center">
-                                        <div class="flex-fill">
-                                            <div class="font-weight-medium">{{ $sale->customer->name }}</div>
-                                            <div class="text-muted">{{ $sale->customer->phone }}</div>
-                                        </div>
-                                    </div>
+                                    <div class="font-weight-medium">{{ $sale->customer->name }}</div>
+                                    <div class="text-muted small">{{ $sale->customer->phone }}</div>
                                 @else
                                     <span class="text-muted">Walk-in Customer</span>
                                 @endif
@@ -264,7 +310,7 @@
                             </td>
                             <td>
                                 <div class="font-weight-medium">{{ $sale->formatted_total_amount }}</div>
-                                <div class="text-muted">{{ $sale->saleItems->count() }} item</div>
+                                <div class="text-muted small">{{ $sale->saleItems->count() }} item</div>
                             </td>
                             <td class="no-print">
                                 <div class="btn-list flex-nowrap">

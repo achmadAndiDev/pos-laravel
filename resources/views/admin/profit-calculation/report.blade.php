@@ -19,6 +19,30 @@
         border-radius: 8px;
         overflow: hidden;
         box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    /* Optimasi tabel untuk mobile */
+    .table-responsive .table {
+        min-width: 800px;
+    }
+    
+    /* Responsive untuk mobile */
+    @media (max-width: 768px) {
+        .table-responsive {
+            font-size: 0.875rem;
+        }
+        
+        .table-responsive .table th,
+        .table-responsive .table td {
+            padding: 0.5rem 0.25rem;
+        }
+        
+        .btn-list .btn {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+        }
     }
     .profit-positive {
         color: #28a745;

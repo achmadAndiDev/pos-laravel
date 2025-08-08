@@ -97,6 +97,61 @@
       .dataTables_length {
           margin-bottom: 0.5rem !important;
       }
+      
+      /* Global Table Responsiveness */
+      .table-responsive {
+          overflow-x: auto !important;
+          -webkit-overflow-scrolling: touch !important;
+          border-radius: 8px;
+      }
+      
+      /* Ensure tables have minimum width for proper scrolling */
+      .table-responsive .table {
+          min-width: 700px;
+      }
+      
+      /* Compact table cells for mobile */
+      @media (max-width: 768px) {
+          .table-responsive {
+              font-size: 0.875rem;
+          }
+          
+          .table-responsive .table th,
+          .table-responsive .table td {
+              padding: 0.5rem 0.25rem;
+              white-space: nowrap;
+              vertical-align: middle;
+          }
+          
+          .table-responsive .btn-list .btn {
+              padding: 0.25rem 0.5rem;
+              font-size: 0.75rem;
+          }
+          
+          .table-responsive .badge {
+              font-size: 0.7rem;
+              padding: 0.25em 0.5em;
+          }
+          
+          .table-responsive .text-muted.small {
+              font-size: 0.7rem;
+          }
+      }
+      
+      /* Specific optimizations for report tables */
+      .table-responsive .table th,
+      .table-responsive .table td {
+          vertical-align: middle;
+      }
+      
+      /* Allow certain columns to wrap text */
+      .table-responsive .table td:nth-child(4), /* Usually outlet/customer column */
+      .table-responsive .table td:nth-child(5) { /* Usually supplier/description column */
+          white-space: normal;
+          word-wrap: break-word;
+          min-width: 120px;
+          max-width: 200px;
+      }
 
       /* Navbar Dropdown Styling */
       .navbar-nav .dropdown-menu {

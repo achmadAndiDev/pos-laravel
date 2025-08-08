@@ -19,7 +19,57 @@
         border-radius: 8px;
         overflow: hidden;
         box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
     }
+    
+    /* Optimasi tabel untuk mobile */
+    #purchaseTable {
+        min-width: 800px; /* Minimum width untuk memastikan tabel tidak terlalu sempit */
+    }
+    
+    #purchaseTable th,
+    #purchaseTable td {
+        white-space: nowrap;
+        vertical-align: middle;
+    }
+    
+    /* Kolom yang bisa dibuat lebih fleksibel */
+    #purchaseTable th:nth-child(4), /* Outlet */
+    #purchaseTable td:nth-child(4) {
+        min-width: 120px;
+        white-space: normal;
+        word-wrap: break-word;
+    }
+    
+    #purchaseTable th:nth-child(5), /* Supplier */
+    #purchaseTable td:nth-child(5) {
+        min-width: 150px;
+        white-space: normal;
+        word-wrap: break-word;
+    }
+    
+    /* Responsive untuk mobile */
+    @media (max-width: 768px) {
+        .table-responsive {
+            font-size: 0.875rem;
+        }
+        
+        #purchaseTable th,
+        #purchaseTable td {
+            padding: 0.5rem 0.25rem;
+        }
+        
+        .btn-list .btn {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+        }
+        
+        .card-actions {
+            font-size: 0.75rem;
+        }
+    }
+    
     @media print {
         .no-print {
             display: none !important;
@@ -33,6 +83,14 @@
         .card {
             border: none !important;
             box-shadow: none !important;
+        }
+        
+        .table-responsive {
+            overflow: visible !important;
+        }
+        
+        #purchaseTable {
+            min-width: auto !important;
         }
     }
 </style>
@@ -196,36 +254,24 @@
                         <tr>
                             <td>{{ $index + 1 }}</td>
                             <td>
-                                <div class="d-flex py-1 align-items-center">
-                                    <div class="flex-fill">
-                                        <div class="font-weight-medium">{{ $purchase->code }}</div>
-                                        @if($purchase->invoice_number)
-                                            <div class="text-muted">{{ $purchase->invoice_number }}</div>
-                                        @endif
-                                    </div>
-                                </div>
+                                <div class="font-weight-medium">{{ $purchase->code }}</div>
+                                @if($purchase->invoice_number)
+                                    <div class="text-muted small">{{ $purchase->invoice_number }}</div>
+                                @endif
                             </td>
                             <td>
                                 <div>{{ $purchase->purchase_date->format('d/m/Y') }}</div>
                                 <div class="text-muted">{{ $purchase->created_at->format('H:i') }}</div>
                             </td>
                             <td>
-                                <div class="d-flex py-1 align-items-center">
-                                    <div class="flex-fill">
-                                        <div class="font-weight-medium">{{ $purchase->outlet->name }}</div>
-                                        <div class="text-muted">{{ $purchase->outlet->address }}</div>
-                                    </div>
-                                </div>
+                                <div class="font-weight-medium">{{ $purchase->outlet->name }}</div>
+                                <div class="text-muted small">{{ Str::limit($purchase->outlet->address, 30) }}</div>
                             </td>
                             <td>
-                                <div class="d-flex py-1 align-items-center">
-                                    <div class="flex-fill">
-                                        <div class="font-weight-medium">{{ $purchase->supplier_name }}</div>
-                                        @if($purchase->supplier_phone)
-                                            <div class="text-muted">{{ $purchase->supplier_phone }}</div>
-                                        @endif
-                                    </div>
-                                </div>
+                                <div class="font-weight-medium">{{ $purchase->supplier_name }}</div>
+                                @if($purchase->supplier_phone)
+                                    <div class="text-muted small">{{ $purchase->supplier_phone }}</div>
+                                @endif
                             </td>
                             <td>
                                 <span class="badge {{ $purchase->status_badge_class }}">
@@ -234,7 +280,7 @@
                             </td>
                             <td>
                                 <div class="font-weight-medium">{{ $purchase->formatted_total_amount }}</div>
-                                <div class="text-muted">{{ $purchase->purchaseItems->count() }} item</div>
+                                <div class="text-muted small">{{ $purchase->purchaseItems->count() }} item</div>
                             </td>
                             <td class="no-print">
                                 <div class="btn-list flex-nowrap">
