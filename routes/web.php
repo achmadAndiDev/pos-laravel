@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\SaleController;
 use App\Http\Controllers\Admin\ProfitCalculationController;
 use App\Http\Controllers\Admin\SalesCalculationController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\UserController;
 
 Route::get('/', [DashboardController::class, 'index']);
 
@@ -18,6 +19,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // Dashboard
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard', [DashboardController::class, 'index']);
+
+    // Users
+    Route::resource('users', UserController::class);
+    Route::patch('users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');
 
     // Outlets
     Route::resource('outlets', OutletController::class);
@@ -70,6 +75,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::post('sales/{sale}/complete', [SaleController::class, 'complete'])->name('sales.complete');
     Route::post('sales/{sale}/cancel', [SaleController::class, 'cancel'])->name('sales.cancel');
     Route::get('sales/products/by-outlet', [SaleController::class, 'getProductsByOutlet'])->name('sales.products-by-outlet');
+    
+    // Receipt printing options
+    Route::get('sales/{sale}/print-receipt', [SaleController::class, 'printReceipt'])->name('sales.print-receipt');
+    Route::get('sales/{sale}/thermal-receipt', [SaleController::class, 'thermalReceipt'])->name('sales.thermal-receipt');
+    Route::post('sales/{sale}/send-whatsapp', [SaleController::class, 'sendToWhatsApp'])->name('sales.send-whatsapp');
 
     // Sales Calculation
     Route::get('sales-calculation', [SalesCalculationController::class, 'index'])->name('sales-calculation.index');

@@ -37,3 +37,43 @@ if (!function_exists('setting_flush_cache')) {
         }
     }
 }
+
+if (!function_exists('user_can')) {
+    function user_can($permission)
+    {
+        return auth()->check() && auth()->user()->hasPermission($permission);
+    }
+}
+
+if (!function_exists('user_has_role')) {
+    function user_has_role($role)
+    {
+        if (!auth()->check()) {
+            return false;
+        }
+        
+        if (is_string($role)) {
+            $role = \App\Enums\UserRole::from($role);
+        }
+        
+        return auth()->user()->hasRole($role);
+    }
+}
+
+if (!function_exists('user_has_any_role')) {
+    function user_has_any_role($roles)
+    {
+        if (!auth()->check()) {
+            return false;
+        }
+        
+        return auth()->user()->hasAnyRole($roles);
+    }
+}
+
+if (!function_exists('user_can_access_outlet')) {
+    function user_can_access_outlet($outletId)
+    {
+        return auth()->check() && auth()->user()->canAccessOutlet($outletId);
+    }
+}

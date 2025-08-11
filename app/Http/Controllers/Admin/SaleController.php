@@ -489,4 +489,141 @@ class SaleController extends Controller
 
         return $pdf->download('laporan-penjualan-' . date('Y-m-d') . '.pdf');
     }
+
+    /**
+     * Print receipt for web version
+     */
+    public function printReceipt(Sale $sale)
+    {
+        if ($sale->status !== 'completed') {
+            return redirect()->back()
+                ->with('error', 'Hanya penjualan yang sudah selesai yang dapat dicetak');
+        }
+
+        $sale->load(['outlet', 'customer', 'saleItems.product']);
+        
+        return view('admin.sales.receipt-print', compact('sale'));
+    }
+
+    /**
+     * Generate receipt data for thermal printer (58mm)
+     */
+    public function thermalReceipt(Sale $sale)
+    {
+        if ($sale->status !== 'completed') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Hanya penjualan yang sudah selesai yang dapat dicetak'
+            ]);
+        }
+
+        $sale->load(['outlet', 'customer', 'saleItems.product']);
+        
+        // Format data untuk thermal printer 58mm
+        $receiptData = [
+            'outlet_name' => $sale->outlet->name,
+            'sale_code' => $sale->code,
+            'sale_date' => $sale->sale_date->format('d/m/Y H:i'),
+            'cashier' => $sale->created_by ?? 'System',
+            'customer' => $sale->customer ? $sale->customer->name : 'Walk-in Customer',
+            'items' => $sale->saleItems->map(function ($item) {
+                return [
+                    'name' => $item->product->name,
+                    'quantity' => $item->quantity,
+                    'unit_price' => $item->unit_price,
+                    'total_price' => $item->total_price,
+                ];
+            }),
+            'subtotal' => $sale->subtotal,
+            'tax_amount' => $sale->tax_amount,
+            'discount_amount' => $sale->discount_amount,
+            'total_amount' => $sale->total_amount,
+            'paid_amount' => $sale->paid_amount,
+            'change_amount' => $sale->change_amount,
+            'payment_method' => $sale->payment_method_text,
+        ];
+
+        return response()->json([
+            'success' => true,
+            'data' => $receiptData
+        ]);
+    }
+
+    /**
+     * Send receipt to WhatsApp
+     */
+    public function sendToWhatsApp(Sale $sale)
+    {
+        if ($sale->status !== 'completed') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Hanya penjualan yang sudah selesai yang dapat dikirim'
+            ]);
+        }
+
+        if (!$sale->customer || !$sale->customer->phone) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Customer tidak memiliki nomor WhatsApp'
+            ]);
+        }
+
+        $sale->load(['outlet', 'customer', 'saleItems.product']);
+        
+        // Format pesan WhatsApp
+        $message = "*STRUK PENJUALAN*\n";
+        $message .= "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
+        $message .= "*{$sale->outlet->name}*\n";
+        $message .= "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n";
+        
+        $message .= "No: {$sale->code}\n";
+        $message .= "Tanggal: {$sale->sale_date->format('d/m/Y H:i')}\n";
+        $message .= "Kasir: {$sale->created_by}\n";
+        $message .= "Customer: {$sale->customer->name}\n\n";
+        
+        $message .= "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
+        $message .= "*DETAIL PEMBELIAN*\n";
+        $message .= "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
+        
+        foreach ($sale->saleItems as $item) {
+            $message .= "{$item->product->name}\n";
+            $message .= "{$item->quantity} x " . number_format($item->unit_price, 0, ',', '.') . " = " . number_format($item->total_price, 0, ',', '.') . "\n\n";
+        }
+        
+        $message .= "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
+        $message .= "Subtotal: Rp " . number_format($sale->subtotal, 0, ',', '.') . "\n";
+        
+        if ($sale->tax_amount > 0) {
+            $message .= "Pajak: Rp " . number_format($sale->tax_amount, 0, ',', '.') . "\n";
+        }
+        
+        if ($sale->discount_amount > 0) {
+            $message .= "Diskon: -Rp " . number_format($sale->discount_amount, 0, ',', '.') . "\n";
+        }
+        
+        $message .= "*TOTAL: Rp " . number_format($sale->total_amount, 0, ',', '.') . "*\n\n";
+        
+        $message .= "Bayar ({$sale->payment_method_text}): Rp " . number_format($sale->paid_amount, 0, ',', '.') . "\n";
+        
+        if ($sale->change_amount > 0) {
+            $message .= "Kembalian: Rp " . number_format($sale->change_amount, 0, ',', '.') . "\n";
+        }
+        
+        $message .= "\nTerima kasih atas kunjungan Anda! 🙏";
+        
+        // Format nomor WhatsApp (hapus karakter non-digit dan tambahkan 62 jika dimulai dengan 0)
+        $phone = preg_replace('/[^0-9]/', '', $sale->customer->phone);
+        if (substr($phone, 0, 1) === '0') {
+            $phone = '62' . substr($phone, 1);
+        }
+        
+        $whatsappUrl = "https://wa.me/{$phone}?text=" . urlencode($message);
+        
+        return response()->json([
+            'success' => true,
+            'whatsapp_url' => $whatsappUrl,
+            'customer_name' => $sale->customer->name,
+            'customer_phone' => $sale->customer->phone
+        ]);
+    }
 }

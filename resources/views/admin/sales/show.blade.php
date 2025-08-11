@@ -224,13 +224,31 @@
             </div>
         @endif
 
-        <!-- Print Receipt -->
+        <!-- Print Receipt Options -->
         @if($sale->status === 'completed')
             <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Opsi Struk</h3>
+                </div>
                 <div class="card-body">
-                    <button type="button" class="btn btn-primary w-100" onclick="printReceipt()">
+                    <!-- Send to WhatsApp -->
+                    @if($sale->customer && $sale->customer->phone)
+                        <button type="button" class="btn btn-success w-100 mb-2" onclick="sendToWhatsApp()">
+                            <i class="ti ti-brand-whatsapp"></i>
+                            Kirim ke WhatsApp
+                        </button>
+                    @endif
+                    
+                    <!-- Print Web Version -->
+                    <a href="{{ route('admin.sales.print-receipt', $sale) }}" target="_blank" class="btn btn-primary w-100 mb-2">
                         <i class="ti ti-printer"></i>
-                        Cetak Struk
+                        Cetak Struk Web
+                    </a>
+                    
+                    <!-- Print Thermal 58mm -->
+                    <button type="button" class="btn btn-info w-100" onclick="printThermal()">
+                        <i class="ti ti-device-mobile"></i>
+                        Cetak Thermal 58mm
                     </button>
                 </div>
             </div>
@@ -319,6 +337,149 @@
 
 @section('scripts')
 <script>
+// Send receipt to WhatsApp
+function sendToWhatsApp() {
+    const saleId = {{ $sale->id }};
+    
+    // Show loading
+    const button = event.target;
+    const originalText = button.innerHTML;
+    button.innerHTML = '<i class="ti ti-loader-2 ti-spin"></i> Mengirim...';
+    button.disabled = true;
+    
+    fetch(`/admin/sales/${saleId}/send-whatsapp`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Open WhatsApp with the message
+            window.open(data.whatsapp_url, '_blank');
+            
+            // Show success message
+            alert(`Struk berhasil disiapkan untuk dikirim ke ${data.customer_name} (${data.customer_phone})`);
+        } else {
+            alert('Error: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Terjadi kesalahan saat mengirim ke WhatsApp');
+    })
+    .finally(() => {
+        // Restore button
+        button.innerHTML = originalText;
+        button.disabled = false;
+    });
+}
+
+// Print thermal receipt (for Android app integration)
+function printThermal() {
+    const saleId = {{ $sale->id }};
+    
+    // Show loading
+    const button = event.target;
+    const originalText = button.innerHTML;
+    button.innerHTML = '<i class="ti ti-loader-2 ti-spin"></i> Memproses...';
+    button.disabled = true;
+    
+    fetch(`/admin/sales/${saleId}/thermal-receipt`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Check if Android interface is available
+            if (typeof Android !== 'undefined' && Android.printThermalReceipt) {
+                // Send data to Android app for thermal printing
+                Android.printThermalReceipt(JSON.stringify(data.data));
+                alert('Data struk telah dikirim ke printer thermal');
+            } else {
+                // Fallback: show data in console for development
+                console.log('Thermal Receipt Data:', data.data);
+                
+                // Show formatted receipt data in alert for testing
+                let receiptText = `${data.data.outlet_name}\n`;
+                receiptText += `STRUK PENJUALAN\n`;
+                receiptText += `================================\n`;
+                receiptText += `No: ${data.data.sale_code}\n`;
+                receiptText += `Tanggal: ${data.data.sale_date}\n`;
+                receiptText += `Kasir: ${data.data.cashier}\n`;
+                receiptText += `Customer: ${data.data.customer}\n`;
+                receiptText += `================================\n`;
+                
+                data.data.items.forEach(item => {
+                    receiptText += `${item.name}\n`;
+                    receiptText += `${item.quantity} x ${item.unit_price.toLocaleString('id-ID')} = ${item.total_price.toLocaleString('id-ID')}\n`;
+                });
+                
+                receiptText += `================================\n`;
+                receiptText += `Subtotal: ${data.data.subtotal.toLocaleString('id-ID')}\n`;
+                if (data.data.tax_amount > 0) {
+                    receiptText += `Pajak: ${data.data.tax_amount.toLocaleString('id-ID')}\n`;
+                }
+                if (data.data.discount_amount > 0) {
+                    receiptText += `Diskon: -${data.data.discount_amount.toLocaleString('id-ID')}\n`;
+                }
+                receiptText += `TOTAL: ${data.data.total_amount.toLocaleString('id-ID')}\n`;
+                receiptText += `Bayar: ${data.data.paid_amount.toLocaleString('id-ID')}\n`;
+                if (data.data.change_amount > 0) {
+                    receiptText += `Kembalian: ${data.data.change_amount.toLocaleString('id-ID')}\n`;
+                }
+                receiptText += `\nTerima kasih!`;
+                
+                // For web testing, show in modal or new window
+                const printWindow = window.open('', '_blank', 'width=400,height=600');
+                printWindow.document.write(`
+                    <html>
+                        <head>
+                            <title>Thermal Receipt Preview</title>
+                            <style>
+                                body { 
+                                    font-family: 'Courier New', monospace; 
+                                    font-size: 12px; 
+                                    line-height: 1.2;
+                                    margin: 20px;
+                                    white-space: pre-line;
+                                }
+                            </style>
+                        </head>
+                        <body>
+                            <h3>Preview Struk Thermal 58mm</h3>
+                            <div style="border: 1px solid #ccc; padding: 10px; width: 250px;">
+                                ${receiptText}
+                            </div>
+                            <br>
+                            <button onclick="window.print()">Print</button>
+                            <button onclick="window.close()">Close</button>
+                        </body>
+                    </html>
+                `);
+            }
+        } else {
+            alert('Error: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Terjadi kesalahan saat memproses struk thermal');
+    })
+    .finally(() => {
+        // Restore button
+        button.innerHTML = originalText;
+        button.disabled = false;
+    });
+}
+
+// Legacy print function (kept for backward compatibility)
 function printReceipt() {
     const receiptContent = document.getElementById('receiptTemplate').innerHTML;
     const printWindow = window.open('', '_blank');
@@ -336,12 +497,12 @@ function printReceipt() {
             </head>
             <body>
                 ${receiptContent}
-                <script>
+                script>
                     window.onload = function() {
                         window.print();
                         window.close();
                     }
-                </script>
+                script>
             </body>
         </html>
     `);

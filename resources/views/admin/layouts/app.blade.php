@@ -321,6 +321,18 @@
                 </a>
               </li>
 
+              <!-- User Management -->
+              @if(user_can('users.view'))
+              <li class="nav-item {{ request()->is('admin/users*') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('admin.users.index') }}">
+                  <span class="nav-link-icon d-inline-block">
+                    <i class="ti ti-user-cog"></i>
+                  </span>
+                  <span class="nav-link-title">Manajemen User</span>
+                </a>
+              </li>
+              @endif
+
               <!-- Master Data -->
               <li class="nav-item dropdown {{ request()->is('admin/outlets*') || request()->is('admin/customers*') || request()->is('admin/product-categories*') || request()->is('admin/products*') ? 'active' : '' }}">
                 <a class="nav-link dropdown-toggle" href="#navbar-master" data-bs-toggle="dropdown" data-bs-auto-close="outside" role="button" aria-expanded="false">
@@ -432,18 +444,6 @@
                       <i class="ti ti-user-cog"></i>
                     </span>
                     User
-                  </a>
-                  <a class="dropdown-item {{ request()->is('admin/roles*') ? 'active' : '' }}" href="#" onclick="alert('Manajemen Role belum tersedia')">
-                    <span class="nav-link-icon d-inline-block me-2">
-                      <i class="ti ti-key"></i>
-                    </span>
-                    Role & Permission
-                  </a>
-                  <a class="dropdown-item {{ request()->is('admin/access/logs*') ? 'active' : '' }}" href="#" onclick="alert('Log Aktivitas belum tersedia')">
-                    <span class="nav-link-icon d-inline-block me-2">
-                      <i class="ti ti-history"></i>
-                    </span>
-                    Log Aktivitas
                   </a>
                 </div>
               </li>
