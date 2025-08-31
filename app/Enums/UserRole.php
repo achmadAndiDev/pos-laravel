@@ -71,7 +71,6 @@ enum UserRole: string
                 'reports.view', 'settings.manage'
             ],
             self::ADMIN => [
-                'outlets.view', 'outlets.edit',
                 'products.view', 'products.create', 'products.edit', 'products.delete',
                 'categories.view', 'categories.create', 'categories.edit', 'categories.delete',
                 'customers.view', 'customers.create', 'customers.edit', 'customers.delete',

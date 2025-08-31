@@ -9,8 +9,8 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- Favicon -->
-    <link rel="shortcut icon" href="{{ asset('favicon.ico') }}?v={{ filemtime(public_path('favicon.ico')) }}" type="image/x-icon">
-    <link rel="icon" href="{{ asset('favicon.ico') }}?v={{ filemtime(public_path('favicon.ico')) }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ asset('favicon.ico') }}?v=" type="image/x-icon">
+    <link rel="icon" href="{{ asset('favicon.ico') }}?v=" type="image/x-icon">
     <!-- CSS files -->
     <link href="{{ asset('tabler/dist/css/tabler.min.css') }}" rel="stylesheet" />
     <link href="{{ asset('tabler/dist/css/tabler-flags.min.css') }}" rel="stylesheet" />
@@ -279,6 +279,28 @@
                   </svg>
                 </a>
               </div>
+
+              <!-- Outlet Switcher (visible when user has > 1 outlets) -->
+              @php
+                $user = Auth::user();
+                $userOutlets = $user?->outlets()->select('outlets.id','outlets.name')->get();
+                $selectedOutletId = function_exists('selected_outlet_id') ? selected_outlet_id() : null;
+              @endphp
+              @if($userOutlets && $userOutlets->count() > 1)
+                <div class="nav-item ms-2" style="min-width: 200px;">
+                  <form action="{{ route('admin.select-outlet') }}" method="POST" id="outletSwitcherForm">
+                    @csrf
+                    <select name="outlet_id" class="form-select form-select-sm" onchange="this.form.submit()">
+                      <option value="">{{ __('Semua Outlet') }}</option>
+                      @foreach($userOutlets as $outlet)
+                        <option value="{{ $outlet->id }}" {{ (string)$selectedOutletId === (string)$outlet->id ? 'selected' : '' }}>
+                          {{ $outlet->name }}
+                        </option>
+                      @endforeach
+                    </select>
+                  </form>
+                </div>
+              @endif
             </div>
             
             <!-- User Menu -->
@@ -294,11 +316,8 @@
                 <a href="#" class="dropdown-item">
                   <i class="bi bi-person-gear me-2"></i> Profil
                 </a>
-                <a href="#" class="dropdown-item">
-                  <i class="bi bi-gear me-2"></i> Pengaturan
-                </a>
                 <div class="dropdown-divider"></div>
-                <form action="#" method="POST">
+                <form action="{{ route('logout') }}" method="POST">
                   @csrf
                   <button type="submit" class="dropdown-item">
                     <i class="bi bi-box-arrow-right me-2"></i> Keluar
@@ -334,6 +353,14 @@
               @endif
 
               <!-- Master Data -->
+              @php
+                $canViewOutlets = user_can('outlets.view');
+                $canViewCustomers = user_can('customers.view');
+                $canViewCategories = user_can('categories.view');
+                $canViewProducts = user_can('products.view');
+                $showMaster = $canViewOutlets || $canViewCustomers || $canViewCategories || $canViewProducts;
+              @endphp
+              @if($showMaster)
               <li class="nav-item dropdown {{ request()->is('admin/outlets*') || request()->is('admin/customers*') || request()->is('admin/product-categories*') || request()->is('admin/products*') ? 'active' : '' }}">
                 <a class="nav-link dropdown-toggle" href="#navbar-master" data-bs-toggle="dropdown" data-bs-auto-close="outside" role="button" aria-expanded="false">
                   <span class="nav-link-icon d-md-none d-lg-inline-block">
@@ -342,34 +369,53 @@
                   <span class="nav-link-title">Master Data</span>
                 </a>
                 <div class="dropdown-menu">
+                  @if($canViewOutlets)
                   <a class="dropdown-item {{ request()->is('admin/outlets*') ? 'active' : '' }}" href="{{ route('admin.outlets.index') }}">
                     <span class="nav-link-icon d-inline-block me-2">
                       <i class="ti ti-building-store"></i>
                     </span>
                     Outlet
                   </a>
+                  @endif
+
+                  @if($canViewCustomers)
                   <a class="dropdown-item {{ request()->is('admin/customers*') ? 'active' : '' }}" href="{{ route('admin.customers.index') }}">
                     <span class="nav-link-icon d-inline-block me-2">
                       <i class="ti ti-users"></i>
                     </span>
                     Customer
                   </a>
+                  @endif
+
+                  @if($canViewCategories)
                   <a class="dropdown-item {{ request()->is('admin/product-categories*') ? 'active' : '' }}" href="{{ route('admin.product-categories.index') }}">
                     <span class="nav-link-icon d-inline-block me-2">
                       <i class="ti ti-category"></i>
                     </span>
                     Kategori
                   </a>
+                  @endif
+
+                  @if($canViewProducts)
                   <a class="dropdown-item {{ request()->is('admin/products*') ? 'active' : '' }}" href="{{ route('admin.products.index') }}">
                     <span class="nav-link-icon d-inline-block me-2">
                       <i class="ti ti-package"></i>
                     </span>
                     Product
                   </a>
+                  @endif
                 </div>
               </li>
+              @endif
 
               <!-- Transaksi -->
+              @php
+                $canViewPurchases = user_can('purchases.view');
+                $canViewSales = user_can('sales.view');
+                $canViewProfitCalc = user_can('reports.view') || user_can('reports.view.sales') || user_can('reports.view.purchases');
+                $showTransaksi = $canViewPurchases || $canViewSales || $canViewProfitCalc;
+              @endphp
+              @if($showTransaksi)
               <li class="nav-item dropdown {{ request()->is('admin/purchases*') || request()->is('admin/sales*') || request()->is('admin/profit-calculation*') ? 'active' : '' }}">
                 <a class="nav-link dropdown-toggle" href="#navbar-transaction" data-bs-toggle="dropdown" data-bs-auto-close="outside" role="button" aria-expanded="false">
                   <span class="nav-link-icon d-md-none d-lg-inline-block">
@@ -378,18 +424,25 @@
                   <span class="nav-link-title">Transaksi</span>
                 </a>
                 <div class="dropdown-menu">
+                  @if($canViewPurchases)
                   <a class="dropdown-item {{ request()->is('admin/purchases*') ? 'active' : '' }}" href="{{ route('admin.purchases.index') }}">
                     <span class="nav-link-icon d-inline-block me-2">
                       <i class="ti ti-truck"></i>
                     </span>
                     Pembelian
                   </a>
+                  @endif
+
+                  @if($canViewSales)
                   <a class="dropdown-item {{ request()->is('admin/sales*') ? 'active' : '' }}" href="{{ route('admin.sales.index') }}">
                     <span class="nav-link-icon d-inline-block me-2">
                       <i class="ti ti-cash"></i>
                     </span>
                     Penjualan
                   </a>
+                  @endif
+
+                  @if($canViewProfitCalc)
                   <div class="dropdown-divider"></div>
                   <a class="dropdown-item {{ request()->is('admin/profit-calculation*') ? 'active' : '' }}" href="{{ route('admin.profit-calculation.index') }}">
                     <span class="nav-link-icon d-inline-block me-2">
@@ -397,10 +450,19 @@
                     </span>
                     Perhitungan Laba
                   </a>
+                  @endif
                 </div>
               </li>
+              @endif
 
               <!-- Laporan -->
+              @php
+                $canReportPurchases = user_can('reports.view') || user_can('reports.view.purchases');
+                $canReportSales = user_can('reports.view') || user_can('reports.view.sales');
+                $canReportProfit = user_can('reports.view');
+                $showReports = $canReportPurchases || $canReportSales || $canReportProfit;
+              @endphp
+              @if($showReports)
               <li class="nav-item dropdown {{ request()->is('admin/report*') || request()->is('admin/reports*') ? 'active' : '' }}">
                 <a class="nav-link dropdown-toggle" href="#navbar-reports" data-bs-toggle="dropdown" data-bs-auto-close="outside" role="button" aria-expanded="false">
                   <span class="nav-link-icon d-md-none d-lg-inline-block">
@@ -409,44 +471,35 @@
                   <span class="nav-link-title">Laporan</span>
                 </a>
                 <div class="dropdown-menu">
+                  @if($canReportPurchases)
                   <a class="dropdown-item {{ request()->is('admin/report/purchases*') ? 'active' : '' }}" href="{{ route('admin.purchases.report') }}">
                     <span class="nav-link-icon d-inline-block me-2">
                       <i class="ti ti-truck"></i>
                     </span>
                     Pembelian
                   </a>
+                  @endif
+
+                  @if($canReportSales)
                   <a class="dropdown-item {{ request()->is('admin/report/sales*') ? 'active' : '' }}" href="{{ route('admin.sales.report') }}">
                     <span class="nav-link-icon d-inline-block me-2">
                       <i class="ti ti-cash"></i>
                     </span>
                     Penjualan
                   </a>
+                  @endif
+
+                  @if($canReportProfit)
                   <a class="dropdown-item {{ request()->is('admin/report/profit*') ? 'active' : '' }}" href="{{ route('admin.profit-calculation.report') }}">
                     <span class="nav-link-icon d-inline-block me-2">
                       <i class="ti ti-trending-up"></i>
                     </span>
                     Laba
                   </a>
+                  @endif
                 </div>
               </li>
-
-              <!-- Manajemen Akses -->
-              <li class="nav-item dropdown {{ request()->is('admin/access*') || request()->is('admin/users*') || request()->is('admin/roles*') ? 'active' : '' }}">
-                <a class="nav-link dropdown-toggle" href="#navbar-access" data-bs-toggle="dropdown" data-bs-auto-close="outside" role="button" aria-expanded="false">
-                  <span class="nav-link-icon d-md-none d-lg-inline-block">
-                    <i class="ti ti-shield-lock"></i>
-                  </span>
-                  <span class="nav-link-title">Manajemen Akses</span>
-                </a>
-                <div class="dropdown-menu">
-                  <a class="dropdown-item {{ request()->is('admin/users*') ? 'active' : '' }}" href="#" onclick="alert('Manajemen User belum tersedia')">
-                    <span class="nav-link-icon d-inline-block me-2">
-                      <i class="ti ti-user-cog"></i>
-                    </span>
-                    User
-                  </a>
-                </div>
-              </li>
+              @endif
             </ul>
           </div>
         </div>

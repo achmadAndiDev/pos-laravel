@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Session;
+use App\Models\Outlet;
 
 if (!function_exists('setting')) {
     function setting($key, $default = null)
@@ -75,5 +77,35 @@ if (!function_exists('user_can_access_outlet')) {
     function user_can_access_outlet($outletId)
     {
         return auth()->check() && auth()->user()->canAccessOutlet($outletId);
+    }
+}
+
+// Get selected outlet id stored in session (validated against user access)
+if (!function_exists('selected_outlet_id')) {
+    function selected_outlet_id(): ?int
+    {
+        if (!auth()->check()) {
+            return null;
+        }
+
+        $user = auth()->user();
+        $selectedId = Session::get('selected_outlet_id');
+
+        if ($selectedId && $user->canAccessOutlet((int)$selectedId)) {
+            return (int)$selectedId;
+        }
+
+        // Fallback for staff: use primary outlet if exists
+        $primary = $user->primaryOutlet();
+        return $primary?->id;
+    }
+}
+
+// Get selected outlet model
+if (!function_exists('selected_outlet')) {
+    function selected_outlet(): ?Outlet
+    {
+        $id = selected_outlet_id();
+        return $id ? Outlet::find($id) : null;
     }
 }

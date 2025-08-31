@@ -11,14 +11,26 @@ use App\Http\Controllers\Admin\ProfitCalculationController;
 use App\Http\Controllers\Admin\SalesCalculationController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Admin\OutletSelectionController;
 
-Route::get('/', [DashboardController::class, 'index']);
+// Authentication Routes
+Route::middleware('web')->group(function () {
+    Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [LoginController::class, 'login'])->name('login.attempt');
+    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+});
+
+Route::get('/', [DashboardController::class, 'index'])->middleware('auth');
 
 // Admin Routes
-Route::prefix('admin')->name('admin.')->group(function () {
+Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     // Dashboard
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard', [DashboardController::class, 'index']);
+
+    // Outlet selection (session-based)
+    Route::post('/select-outlet', [OutletSelectionController::class, 'store'])->name('select-outlet');
 
     // Users
     Route::resource('users', UserController::class);

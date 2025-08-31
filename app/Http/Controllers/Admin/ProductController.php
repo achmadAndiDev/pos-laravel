@@ -15,11 +15,18 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::with(['outlet', 'productCategory'])
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $selectedOutletId = function_exists('selected_outlet_id') ? selected_outlet_id() : null;
+
+        $query = Product::with(['outlet', 'productCategory'])
+            ->orderBy('created_at', 'desc');
+
+        if ($selectedOutletId) {
+            $query->where('outlet_id', $selectedOutletId);
+        }
+
+        $products = $query->get();
         
         return view('admin.products.index', compact('products'));
     }
