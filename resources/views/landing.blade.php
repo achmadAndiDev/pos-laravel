@@ -53,11 +53,6 @@
                 <div class="brand-badge">M</div>
                 Majeko
             </div>
-            <nav class="nav">
-                <a href="#tentang">Tentang</a>
-                <a href="#layanan">Layanan</a>
-                <a href="#kontak">Kontak</a>
-            </nav>
         </header>
 
         <section class="hero">
@@ -65,31 +60,14 @@
             <p class="subtitle">Kami membantu bisnis kecil dan menengah mengelola operasional dengan lebih efektif melalui pendekatan yang ringkas, modern, dan mudah digunakan.</p>
             <div class="cta">
                 <a class="btn btn-primary" href="/kasir">Masuk ke Kasir</a>
-                <a class="btn" href="#tentang">Pelajari Lebih Lanjut</a>
             </div>
         </section>
 
         <section id="tentang" class="grid">
-            <article class="card">
+            <article class="card" style="grid-column:span 12">
                 <h2 style="margin:0 0 8px 0">Tentang Majeko</h2>
                 <p style="color:var(--muted);margin:0">Majeko adalah perusahaan yang berfokus pada solusi perangkat lunak yang sederhana namun kuat. Kami percaya teknologi harus mempermudah, bukan mempersulit. Dengan tim kecil yang gesit, kami membangun produk yang cepat, aman, dan mudah diadopsi.</p>
             </article>
-            <aside class="side">
-                <div class="features">
-                    <div class="feature">
-                        <strong>Kualitas</strong>
-                        <p style="margin:6px 0 0;color:var(--muted)">Standar tinggi dalam desain, kinerja, dan keamanan.</p>
-                    </div>
-                    <div class="feature">
-                        <strong>Kepercayaan</strong>
-                        <p style="margin:6px 0 0;color:var(--muted)">Transparan, responsif, dan fokus pada hasil.</p>
-                    </div>
-                    <div class="feature">
-                        <strong>Inovasi</strong>
-                        <p style="margin:6px 0 0;color:var(--muted)">Iterasi cepat untuk solusi yang relevan dan berkelanjutan.</p>
-                    </div>
-                </div>
-            </aside>
         </section>
 
         <section id="layanan" class="grid" style="margin-top:16px">
@@ -110,7 +88,6 @@
                     <p style="margin:0;color:var(--muted)">Kami siap membantu menyesuaikan solusi untuk kebutuhan Anda.</p>
                 </div>
                 <div class="cta">
-                    <a class="btn btn-primary" href="mailto:halo@majeko.id">halo@majeko.id</a>
                     <a class="btn" href="https://wa.me/6281234567890" target="_blank" rel="noopener">WhatsApp</a>
                 </div>
             </div>
