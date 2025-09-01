@@ -5,7 +5,7 @@
 
 @section('right-header')
 <div class="btn-list">
-    <a href="{{ route('admin.product-categories.create') }}" class="btn btn-primary">
+    <a href="{{ route('kasir.product-categories.create') }}" class="btn btn-primary">
         <i class="ti ti-plus"></i>
         Tambah Kategori
     </a>
@@ -67,7 +67,7 @@
                                     <span class="badge bg-secondary">{{ $category->sort_order }}</span>
                                 </td>
                                 <td>
-                                    <form action="{{ route('admin.product-categories.toggle-status', $category) }}" method="POST" class="d-inline">
+                                    <form action="{{ route('kasir.product-categories.toggle-status', $category) }}" method="POST" class="d-inline">
                                         @csrf
                                         @method('PATCH')
                                         <button type="submit" class="btn btn-sm {{ $category->status === 'active' ? 'btn-success' : 'btn-secondary' }}">
@@ -80,13 +80,13 @@
                                 </td>
                                 <td>
                                     <div class="btn-list flex-nowrap">
-                                        <a href="{{ route('admin.product-categories.show', $category) }}" class="btn btn-sm btn-outline-primary">
+                                        <a href="{{ route('kasir.product-categories.show', $category) }}" class="btn btn-sm btn-outline-primary">
                                             <i class="ti ti-eye"></i>
                                         </a>
-                                        <a href="{{ route('admin.product-categories.edit', $category) }}" class="btn btn-sm btn-outline-warning">
+                                        <a href="{{ route('kasir.product-categories.edit', $category) }}" class="btn btn-sm btn-outline-warning">
                                             <i class="ti ti-edit"></i>
                                         </a>
-                                        <form action="{{ route('admin.product-categories.destroy', $category) }}" method="POST" class="d-inline delete-form">
+                                        <form action="{{ route('kasir.product-categories.destroy', $category) }}" method="POST" class="d-inline delete-form">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-sm btn-outline-danger">
@@ -107,7 +107,7 @@
                                             Mulai dengan menambahkan kategori produk pertama Anda.
                                         </p>
                                         <div class="empty-action">
-                                            <a href="{{ route('admin.product-categories.create') }}" class="btn btn-primary">
+                                            <a href="{{ route('kasir.product-categories.create') }}" class="btn btn-primary">
                                                 <i class="ti ti-plus"></i>
                                                 Tambah Kategori
                                             </a>

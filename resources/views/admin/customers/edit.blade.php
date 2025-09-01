@@ -5,11 +5,11 @@
 
 @section('right-header')
 <div class="btn-list">
-    <a href="{{ route('admin.customers.index') }}" class="btn btn-outline-secondary">
+    <a href="{{ route('kasir.customers.index') }}" class="btn btn-outline-secondary">
         <i class="ti ti-arrow-left"></i>
         Kembali
     </a>
-    <a href="{{ route('admin.customers.show', $customer) }}" class="btn btn-outline-primary">
+    <a href="{{ route('kasir.customers.show', $customer) }}" class="btn btn-outline-primary">
         <i class="ti ti-eye"></i>
         Detail
     </a>
@@ -19,7 +19,7 @@
 @section('content')
 <div class="row">
     <div class="col-12">
-        <form action="{{ route('admin.customers.update', $customer) }}" method="POST">
+        <form action="{{ route('kasir.customers.update', $customer) }}" method="POST">
             @csrf
             @method('PUT')
             <div class="card">
@@ -147,7 +147,7 @@
                 </div>
                 <div class="card-footer text-end">
                     <div class="d-flex">
-                        <a href="{{ route('admin.customers.index') }}" class="btn btn-link">Batal</a>
+                        <a href="{{ route('kasir.customers.index') }}" class="btn btn-link">Batal</a>
                         <button type="submit" class="btn btn-primary ms-auto">
                             <i class="ti ti-device-floppy"></i>
                             Update Customer

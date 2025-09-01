@@ -5,7 +5,7 @@
 
 @section('right-header')
 <div class="btn-list">
-    <a href="{{ route('admin.products.edit', $product) }}" class="btn btn-warning">
+    <a href="{{ route('kasir.products.edit', $product) }}" class="btn btn-warning">
         <i class="ti ti-edit"></i>
         Edit Produk
     </a>
@@ -16,7 +16,7 @@
         </button>
         <ul class="dropdown-menu">
             <li>
-                <form action="{{ route('admin.products.toggle-status', $product) }}" method="POST" class="d-inline">
+                <form action="{{ route('kasir.products.toggle-status', $product) }}" method="POST" class="d-inline">
                     @csrf
                     @method('PATCH')
                     <button type="submit" class="dropdown-item">
@@ -26,7 +26,7 @@
                 </form>
             </li>
             <li>
-                <form action="{{ route('admin.products.toggle-sellable', $product) }}" method="POST" class="d-inline">
+                <form action="{{ route('kasir.products.toggle-sellable', $product) }}" method="POST" class="d-inline">
                     @csrf
                     @method('PATCH')
                     <button type="submit" class="dropdown-item">
@@ -37,7 +37,7 @@
             </li>
             <li><hr class="dropdown-divider"></li>
             <li>
-                <form action="{{ route('admin.products.destroy', $product) }}" method="POST" class="d-inline delete-form">
+                <form action="{{ route('kasir.products.destroy', $product) }}" method="POST" class="d-inline delete-form">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="dropdown-item text-danger">
@@ -178,7 +178,7 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-6">
-                        <form action="{{ route('admin.products.add-stock', $product) }}" method="POST">
+                        <form action="{{ route('kasir.products.add-stock', $product) }}" method="POST">
                             @csrf
                             <div class="mb-3">
                                 <label class="form-label">Tambah Stok</label>
@@ -194,7 +194,7 @@
                         </form>
                     </div>
                     <div class="col-md-6">
-                        <form action="{{ route('admin.products.reduce-stock', $product) }}" method="POST">
+                        <form action="{{ route('kasir.products.reduce-stock', $product) }}" method="POST">
                             @csrf
                             <div class="mb-3">
                                 <label class="form-label">Kurangi Stok</label>

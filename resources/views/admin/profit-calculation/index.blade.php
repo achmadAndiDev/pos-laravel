@@ -406,7 +406,7 @@
         formData.append('format', format);
         
         const params = new URLSearchParams(formData);
-        window.open(`{{ route('admin.profit-calculation.export') }}?${params.toString()}`, '_blank');
+        window.open(`{{ route('kasir.profit-calculation.export') }}?${params.toString()}`, '_blank');
     }
 
     // Refresh data

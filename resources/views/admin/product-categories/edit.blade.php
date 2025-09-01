@@ -5,7 +5,7 @@
 
 @section('right-header')
 <div class="btn-list">
-    <a href="{{ route('admin.product-categories.index') }}" class="btn btn-outline-secondary">
+    <a href="{{ route('kasir.product-categories.index') }}" class="btn btn-outline-secondary">
         <i class="ti ti-arrow-left"></i>
         Kembali
     </a>
@@ -15,7 +15,7 @@
 @section('content')
 <div class="row">
     <div class="col-12">
-        <form action="{{ route('admin.product-categories.update', $productCategory) }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('kasir.product-categories.update', $productCategory) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
             <div class="card">
@@ -117,7 +117,7 @@
                 </div>
                 <div class="card-footer text-end">
                     <div class="d-flex">
-                        <a href="{{ route('admin.product-categories.index') }}" class="btn btn-link">Batal</a>
+                        <a href="{{ route('kasir.product-categories.index') }}" class="btn btn-link">Batal</a>
                         <button type="submit" class="btn btn-primary ms-auto">
                             <i class="ti ti-device-floppy"></i>
                             Update Kategori

@@ -5,11 +5,11 @@
 
 @section('right-header')
 <div class="btn-list">
-    <a href="{{ route('admin.customers.index') }}" class="btn btn-outline-secondary">
+    <a href="{{ route('kasir.customers.index') }}" class="btn btn-outline-secondary">
         <i class="ti ti-arrow-left"></i>
         Kembali
     </a>
-    <a href="{{ route('admin.customers.edit', $customer) }}" class="btn btn-primary">
+    <a href="{{ route('kasir.customers.edit', $customer) }}" class="btn btn-primary">
         <i class="ti ti-edit"></i>
         Edit Customer
     </a>
@@ -171,7 +171,7 @@
                 </div>
 
                 <!-- Add Points Form -->
-                <form action="{{ route('admin.customers.add-points', $customer) }}" method="POST" class="mb-3">
+                <form action="{{ route('kasir.customers.add-points', $customer) }}" method="POST" class="mb-3">
                     @csrf
                     <div class="mb-2">
                         <label class="form-label">Tambah Poin</label>
@@ -186,7 +186,7 @@
                 </form>
 
                 <!-- Deduct Points Form -->
-                <form action="{{ route('admin.customers.deduct-points', $customer) }}" method="POST">
+                <form action="{{ route('kasir.customers.deduct-points', $customer) }}" method="POST">
                     @csrf
                     <div class="mb-2">
                         <label class="form-label">Kurangi Poin</label>
@@ -209,7 +209,7 @@
             </div>
             <div class="card-body">
                 <div class="d-grid gap-2">
-                    <form action="{{ route('admin.customers.toggle-status', $customer) }}" method="POST">
+                    <form action="{{ route('kasir.customers.toggle-status', $customer) }}" method="POST">
                         @csrf
                         @method('PATCH')
                         <button type="submit" class="btn {{ $customer->status === 'active' ? 'btn-warning' : 'btn-success' }} w-100">
@@ -218,11 +218,11 @@
                         </button>
                     </form>
 
-                    <a href="{{ route('admin.customers.edit', $customer) }}" class="btn btn-primary">
+                    <a href="{{ route('kasir.customers.edit', $customer) }}" class="btn btn-primary">
                         <i class="ti ti-edit"></i> Edit Customer
                     </a>
 
-                    <form action="{{ route('admin.customers.destroy', $customer) }}" method="POST" class="delete-form">
+                    <form action="{{ route('kasir.customers.destroy', $customer) }}" method="POST" class="delete-form">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="btn btn-danger w-100">

@@ -97,7 +97,7 @@ class PurchaseController extends Controller
                 }
             });
 
-            return redirect()->route('admin.purchases.index')
+            return redirect()->route('kasir.purchases.index')
                 ->with('success', 'Pembelian berhasil dibuat!');
         } catch (\Exception $e) {
             return redirect()->back()
@@ -122,7 +122,7 @@ class PurchaseController extends Controller
     public function edit(Purchase $purchase)
     {
         if (!$purchase->canBeEdited()) {
-            return redirect()->route('admin.purchases.show', $purchase)
+            return redirect()->route('kasir.purchases.show', $purchase)
                 ->with('error', 'Pembelian tidak dapat diedit karena sudah selesai atau dibatalkan!');
         }
 
@@ -143,7 +143,7 @@ class PurchaseController extends Controller
     public function update(Request $request, Purchase $purchase)
     {
         if (!$purchase->canBeEdited()) {
-            return redirect()->route('admin.purchases.show', $purchase)
+            return redirect()->route('kasir.purchases.show', $purchase)
                 ->with('error', 'Pembelian tidak dapat diedit karena sudah selesai atau dibatalkan!');
         }
 
@@ -200,7 +200,7 @@ class PurchaseController extends Controller
                 }
             });
 
-            return redirect()->route('admin.purchases.show', $purchase)
+            return redirect()->route('kasir.purchases.show', $purchase)
                 ->with('success', 'Pembelian berhasil diupdate!');
         } catch (\Exception $e) {
             return redirect()->back()
@@ -222,7 +222,7 @@ class PurchaseController extends Controller
         try {
             $purchase->delete();
             
-            return redirect()->route('admin.purchases.index')
+            return redirect()->route('kasir.purchases.index')
                 ->with('success', 'Pembelian berhasil dihapus!');
         } catch (\Exception $e) {
             return redirect()->back()

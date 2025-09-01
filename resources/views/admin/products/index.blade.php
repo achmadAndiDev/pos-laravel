@@ -5,7 +5,7 @@
 
 @section('right-header')
 <div class="btn-list">
-    <a href="{{ route('admin.products.create') }}" class="btn btn-primary">
+    <a href="{{ route('kasir.products.create') }}" class="btn btn-primary">
         <i class="ti ti-plus"></i>
         Tambah Produk
     </a>
@@ -105,10 +105,10 @@
                                 </td>
                                 <td>
                                     <div class="btn-list flex-nowrap">
-                                        <a href="{{ route('admin.products.show', $product) }}" class="btn btn-sm btn-outline-info">
+                                        <a href="{{ route('kasir.products.show', $product) }}" class="btn btn-sm btn-outline-info">
                                             <i class="ti ti-eye"></i>
                                         </a>
-                                        <a href="{{ route('admin.products.edit', $product) }}" class="btn btn-sm btn-outline-warning">
+                                        <a href="{{ route('kasir.products.edit', $product) }}" class="btn btn-sm btn-outline-warning">
                                             <i class="ti ti-edit"></i>
                                         </a>
                                         <div class="dropdown">
@@ -117,7 +117,7 @@
                                             </button>
                                             <ul class="dropdown-menu">
                                                 <li>
-                                                    <form action="{{ route('admin.products.toggle-status', $product) }}" method="POST" class="d-inline">
+                                                    <form action="{{ route('kasir.products.toggle-status', $product) }}" method="POST" class="d-inline">
                                                         @csrf
                                                         @method('PATCH')
                                                         <button type="submit" class="dropdown-item">
@@ -127,7 +127,7 @@
                                                     </form>
                                                 </li>
                                                 <li>
-                                                    <form action="{{ route('admin.products.toggle-sellable', $product) }}" method="POST" class="d-inline">
+                                                    <form action="{{ route('kasir.products.toggle-sellable', $product) }}" method="POST" class="d-inline">
                                                         @csrf
                                                         @method('PATCH')
                                                         <button type="submit" class="dropdown-item">
@@ -138,7 +138,7 @@
                                                 </li>
                                                 <li><hr class="dropdown-divider"></li>
                                                 <li>
-                                                    <form action="{{ route('admin.products.destroy', $product) }}" method="POST" class="d-inline delete-form">
+                                                    <form action="{{ route('kasir.products.destroy', $product) }}" method="POST" class="d-inline delete-form">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit" class="dropdown-item text-danger">
@@ -163,7 +163,7 @@
                                             Klik tombol "Tambah Produk" untuk menambahkan produk pertama.
                                         </p>
                                         <div class="empty-action">
-                                            <a href="{{ route('admin.products.create') }}" class="btn btn-primary">
+                                            <a href="{{ route('kasir.products.create') }}" class="btn btn-primary">
                                                 <i class="ti ti-plus"></i>
                                                 Tambah Produk
                                             </a>

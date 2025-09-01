@@ -5,18 +5,18 @@
 
 @section('right-header')
 <div class="btn-list">
-    <a href="{{ route('admin.sales.index') }}" class="btn btn-outline-secondary">
+    <a href="{{ route('kasir.sales.index') }}" class="btn btn-outline-secondary">
         <i class="ti ti-arrow-left"></i>
         Kembali
     </a>
     @if($sale->canBeEdited())
-        <a href="{{ route('admin.sales.edit', $sale) }}" class="btn btn-warning">
+        <a href="{{ route('kasir.sales.edit', $sale) }}" class="btn btn-warning">
             <i class="ti ti-edit"></i>
             Edit
         </a>
     @endif
     @if($sale->canBeCompleted())
-        <form action="{{ route('admin.sales.complete', $sale) }}" method="POST" class="d-inline">
+        <form action="{{ route('kasir.sales.complete', $sale) }}" method="POST" class="d-inline">
             @csrf
             <button type="submit" class="btn btn-success" onclick="return confirm('Yakin ingin menyelesaikan penjualan ini?')">
                 <i class="ti ti-check"></i>
@@ -184,7 +184,7 @@
                 </div>
                 <div class="card-body">
                     @if($sale->canBeCompleted())
-                        <form action="{{ route('admin.sales.complete', $sale) }}" method="POST" class="mb-2">
+                        <form action="{{ route('kasir.sales.complete', $sale) }}" method="POST" class="mb-2">
                             @csrf
                             <button type="submit" class="btn btn-success w-100" onclick="return confirm('Yakin ingin menyelesaikan penjualan ini?')">
                                 <i class="ti ti-check"></i>
@@ -194,14 +194,14 @@
                     @endif
                     
                     @if($sale->canBeEdited())
-                        <a href="{{ route('admin.sales.edit', $sale) }}" class="btn btn-warning w-100 mb-2">
+                        <a href="{{ route('kasir.sales.edit', $sale) }}" class="btn btn-warning w-100 mb-2">
                             <i class="ti ti-edit"></i>
                             Edit Penjualan
                         </a>
                     @endif
 
                     @if($sale->status === 'draft')
-                        <form action="{{ route('admin.sales.cancel', $sale) }}" method="POST" class="mb-2">
+                        <form action="{{ route('kasir.sales.cancel', $sale) }}" method="POST" class="mb-2">
                             @csrf
                             <button type="submit" class="btn btn-outline-danger w-100" onclick="return confirm('Yakin ingin membatalkan penjualan ini?')">
                                 <i class="ti ti-x"></i>
@@ -211,7 +211,7 @@
                     @endif
 
                     @if($sale->status !== 'completed')
-                        <form action="{{ route('admin.sales.destroy', $sale) }}" method="POST">
+                        <form action="{{ route('kasir.sales.destroy', $sale) }}" method="POST">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-outline-danger w-100" onclick="return confirm('Yakin ingin menghapus penjualan ini?')">
@@ -240,7 +240,7 @@
                     @endif
                     
                     <!-- Print Web Version -->
-                    <a href="{{ route('admin.sales.print-receipt', $sale) }}" target="_blank" class="btn btn-primary w-100 mb-2">
+                    <a href="{{ route('kasir.sales.print-receipt', $sale) }}" target="_blank" class="btn btn-primary w-100 mb-2">
                         <i class="ti ti-printer"></i>
                         Cetak Struk Web
                     </a>

@@ -10,7 +10,7 @@
             <div class="card-header">
                 <h3 class="card-title">Edit Profil Admin</h3>
             </div>
-            <form action="{{ route('admin.profile.update') }}" method="POST">
+            <form action="{{ route('kasir.profile.update') }}" method="POST">
                 @csrf
                 @method('PUT')
                 
@@ -52,7 +52,7 @@
                 
                 <div class="card-footer">
                     <div class="d-flex justify-content-between">
-                        <a href="{{ route('admin.profile.index') }}" class="btn btn-secondary">
+                        <a href="{{ route('kasir.profile.index') }}" class="btn btn-secondary">
                             <i class="bi bi-arrow-left me-2"></i>Kembali
                         </a>
                         <button type="submit" class="btn btn-primary">

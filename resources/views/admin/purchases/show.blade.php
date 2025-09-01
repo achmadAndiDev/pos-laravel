@@ -6,7 +6,7 @@
 @section('right-header')
 <div class="btn-list">
     @if($purchase->canBeEdited())
-        <a href="{{ route('admin.purchases.edit', $purchase) }}" class="btn btn-warning">
+        <a href="{{ route('kasir.purchases.edit', $purchase) }}" class="btn btn-warning">
             <i class="ti ti-edit"></i>
             Edit
         </a>
@@ -19,7 +19,7 @@
         <ul class="dropdown-menu">
             @if($purchase->canBeCompleted())
                 <li>
-                    <form action="{{ route('admin.purchases.complete', $purchase) }}" method="POST" class="d-inline complete-form">
+                    <form action="{{ route('kasir.purchases.complete', $purchase) }}" method="POST" class="d-inline complete-form">
                         @csrf
                         <button type="submit" class="dropdown-item text-success">
                             <i class="ti ti-check me-2"></i>
@@ -30,7 +30,7 @@
             @endif
             @if($purchase->status === 'draft')
                 <li>
-                    <form action="{{ route('admin.purchases.cancel', $purchase) }}" method="POST" class="d-inline cancel-form">
+                    <form action="{{ route('kasir.purchases.cancel', $purchase) }}" method="POST" class="d-inline cancel-form">
                         @csrf
                         <button type="submit" class="dropdown-item text-warning">
                             <i class="ti ti-x me-2"></i>
@@ -42,7 +42,7 @@
             @if($purchase->status !== 'completed')
                 <li><hr class="dropdown-divider"></li>
                 <li>
-                    <form action="{{ route('admin.purchases.destroy', $purchase) }}" method="POST" class="d-inline delete-form">
+                    <form action="{{ route('kasir.purchases.destroy', $purchase) }}" method="POST" class="d-inline delete-form">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="dropdown-item text-danger">
@@ -54,7 +54,7 @@
             @endif
         </ul>
     </div>
-    <a href="{{ route('admin.purchases.index') }}" class="btn btn-outline-secondary">
+    <a href="{{ route('kasir.purchases.index') }}" class="btn btn-outline-secondary">
         <i class="ti ti-arrow-left"></i>
         Kembali
     </a>
@@ -275,7 +275,7 @@
 
                 <div class="d-grid gap-2">
                     @if($purchase->canBeCompleted())
-                        <form action="{{ route('admin.purchases.complete', $purchase) }}" method="POST" class="complete-form">
+                        <form action="{{ route('kasir.purchases.complete', $purchase) }}" method="POST" class="complete-form">
                             @csrf
                             <button type="submit" class="btn btn-success w-100">
                                 <i class="ti ti-check me-2"></i>
@@ -285,7 +285,7 @@
                     @endif
 
                     @if($purchase->status === 'draft')
-                        <form action="{{ route('admin.purchases.cancel', $purchase) }}" method="POST" class="cancel-form">
+                        <form action="{{ route('kasir.purchases.cancel', $purchase) }}" method="POST" class="cancel-form">
                             @csrf
                             <button type="submit" class="btn btn-warning w-100">
                                 <i class="ti ti-x me-2"></i>

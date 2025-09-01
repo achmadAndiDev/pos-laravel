@@ -124,7 +124,7 @@ class UserController extends Controller
         // Assign outlets
         $user->outlets()->sync($request->outlets);
 
-        return redirect()->route('admin.users.index')
+        return redirect()->route('kasir.users.index')
                         ->with('success', 'User berhasil ditambahkan.');
     }
 
@@ -239,7 +239,7 @@ class UserController extends Controller
         // Update outlets
         $user->outlets()->sync($request->outlets);
 
-        return redirect()->route('admin.users.index')
+        return redirect()->route('kasir.users.index')
                         ->with('success', 'User berhasil diperbarui.');
     }
 
@@ -270,7 +270,7 @@ class UserController extends Controller
 
         $user->delete();
 
-        return redirect()->route('admin.users.index')
+        return redirect()->route('kasir.users.index')
                         ->with('success', 'User berhasil dihapus.');
     }
 

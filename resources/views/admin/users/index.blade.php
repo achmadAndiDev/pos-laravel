@@ -6,7 +6,7 @@
 @section('right-header')
 <div class="btn-list">
     @if(user_can('users.create'))
-    <a href="{{ route('admin.users.create') }}" class="btn btn-primary">
+    <a href="{{ route('kasir.users.create') }}" class="btn btn-primary">
         <i class="ti ti-plus"></i>
         Tambah User
     </a>
@@ -52,7 +52,7 @@
               <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Tidak Aktif</option>
             </select>
             @if(request()->hasAny(['search', 'role', 'status']))
-            <a href="{{ route('admin.users.index') }}" class="btn btn-outline-secondary btn-sm">
+            <a href="{{ route('kasir.users.index') }}" class="btn btn-outline-secondary btn-sm">
               <i class="ti ti-x"></i>
             </a>
             @endif
@@ -122,19 +122,19 @@
               <td>
                 <div class="btn-list flex-nowrap">
                   @if(user_can('users.view'))
-                  <a href="{{ route('admin.users.show', $user) }}" class="btn btn-sm btn-outline-primary">
+                  <a href="{{ route('kasir.users.show', $user) }}" class="btn btn-sm btn-outline-primary">
                     <i class="ti ti-eye"></i>
                   </a>
                   @endif
 
                   @if(user_can('users.edit'))
-                  <a href="{{ route('admin.users.edit', $user) }}" class="btn btn-sm btn-outline-secondary">
+                  <a href="{{ route('kasir.users.edit', $user) }}" class="btn btn-sm btn-outline-secondary">
                     <i class="ti ti-edit"></i>
                   </a>
                   @endif
 
                   @if(auth()->user()->hasPermission('users.edit') && !$user->isSuperAdmin() && $user->id !== auth()->id())
-                  <form action="{{ route('admin.users.toggle-status', $user) }}" method="POST" class="d-inline">
+                  <form action="{{ route('kasir.users.toggle-status', $user) }}" method="POST" class="d-inline">
                     @csrf
                     @method('PATCH')
                     <button type="submit" class="btn btn-sm {{ $user->is_active ? 'btn-outline-warning' : 'btn-outline-success' }}" 
@@ -145,7 +145,7 @@
                   @endif
 
                   @if(auth()->user()->hasPermission('users.delete') && !$user->isSuperAdmin() && $user->id !== auth()->id())
-                  <form action="{{ route('admin.users.destroy', $user) }}" method="POST" class="d-inline">
+                  <form action="{{ route('kasir.users.destroy', $user) }}" method="POST" class="d-inline">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="btn btn-sm btn-outline-danger" 
@@ -172,7 +172,7 @@
                   </p>
                   @if(user_can('users.create'))
                   <div class="empty-action">
-                    <a href="{{ route('admin.users.create') }}" class="btn btn-primary">
+                    <a href="{{ route('kasir.users.create') }}" class="btn btn-primary">
                       <i class="ti ti-plus"></i>
                       Tambah User Pertama
                     </a>

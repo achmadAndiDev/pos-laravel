@@ -61,11 +61,11 @@
 
 @section('right-header')
 <div class="btn-list">
-    <a href="{{ route('admin.sales.report') }}" class="btn btn-outline-primary">
+    <a href="{{ route('kasir.sales.report') }}" class="btn btn-outline-primary">
         <i class="ti ti-chart-line me-1"></i>
         Laporan Penjualan
     </a>
-    <a href="{{ route('admin.profit-calculation.report') }}" class="btn btn-primary">
+    <a href="{{ route('kasir.profit-calculation.report') }}" class="btn btn-primary">
         <i class="ti ti-trending-up me-1"></i>
         Laporan Laba
     </a>
@@ -78,7 +78,7 @@
         <!-- Filter Card -->
         <div class="card filter-card mb-4">
             <div class="card-body">
-                <form method="GET" action="{{ route('admin.dashboard') }}" id="filterForm">
+                <form method="GET" action="{{ route('kasir.dashboard') }}" id="filterForm">
                     <div class="row g-3 align-items-end">
                         <div class="col-md-3">
                             <label class="form-label text-white">Outlet</label>
@@ -284,7 +284,7 @@
             <div class="card-header">
                 <h3 class="card-title">Penjualan Terbaru</h3>
                 <div class="card-actions">
-                    <a href="{{ route('admin.sales.index') }}" class="btn btn-primary btn-sm">
+                    <a href="{{ route('kasir.sales.index') }}" class="btn btn-primary btn-sm">
                         Lihat Semua
                     </a>
                 </div>
@@ -331,7 +331,7 @@
                                 </span>
                             </td>
                             <td>
-                                <a href="{{ route('admin.sales.show', $sale) }}" class="btn btn-sm btn-outline-primary">
+                                <a href="{{ route('kasir.sales.show', $sale) }}" class="btn btn-sm btn-outline-primary">
                                     <i class="ti ti-eye"></i>
                                 </a>
                             </td>

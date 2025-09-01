@@ -5,7 +5,7 @@
 
 @section('right-header')
 <div class="btn-list">
-  <a href="{{ route('admin.users.index') }}" class="btn btn-outline-secondary">
+  <a href="{{ route('kasir.users.index') }}" class="btn btn-outline-secondary">
     <i class="ti ti-arrow-left"></i>
     Kembali
   </a>
@@ -24,7 +24,7 @@
 @section('content')
 <div class="row">
   <div class="col-12">
-    <form action="{{ route('admin.users.store') }}" method="POST">
+    <form action="{{ route('kasir.users.store') }}" method="POST">
       @csrf
       <div class="card">
         <div class="card-header">
@@ -132,7 +132,7 @@
 
       <div class="card-footer bg-transparent mt-3">
         <div class="btn-list justify-content-end">
-          <a href="{{ route('admin.users.index') }}" class="btn">Batal</a>
+          <a href="{{ route('kasir.users.index') }}" class="btn">Batal</a>
           <button type="submit" class="btn btn-primary">
             <i class="ti ti-device-floppy"></i>
             Simpan User

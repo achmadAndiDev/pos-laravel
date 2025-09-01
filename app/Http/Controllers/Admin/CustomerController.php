@@ -61,7 +61,7 @@ class CustomerController extends Controller
 
             $customer = Customer::create($data);
             
-            return redirect()->route('admin.customers.index')
+            return redirect()->route('kasir.customers.index')
                 ->with('success', "Customer {$customer->name} berhasil ditambahkan!")
                 ->with('swal_success', [
                     'title' => 'Berhasil!',
@@ -125,7 +125,7 @@ class CustomerController extends Controller
 
             $customer->update($data);
             
-            return redirect()->route('admin.customers.index')
+            return redirect()->route('kasir.customers.index')
                 ->with('success', "Customer {$customer->name} berhasil diperbarui!")
                 ->with('swal_success', [
                     'title' => 'Berhasil!',
@@ -151,7 +151,7 @@ class CustomerController extends Controller
             $customerName = $customer->name;
             $customer->delete();
             
-            return redirect()->route('admin.customers.index')
+            return redirect()->route('kasir.customers.index')
                 ->with('success', "Customer {$customerName} berhasil dihapus!")
                 ->with('swal_success', [
                     'title' => 'Berhasil Dihapus!',

@@ -101,7 +101,7 @@
         <!-- Filter Card -->
         <div class="card filter-card mb-4 no-print">
             <div class="card-body">
-                <form method="GET" action="{{ route('admin.profit-calculation.report') }}" id="filterForm">
+                <form method="GET" action="{{ route('kasir.profit-calculation.report') }}" id="filterForm">
                     <div class="row g-3">
                         <div class="col-md-3">
                             <label class="form-label text-white">Outlet</label>

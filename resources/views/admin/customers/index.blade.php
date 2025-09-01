@@ -5,7 +5,7 @@
 
 @section('right-header')
 <div class="btn-list">
-    <a href="{{ route('admin.customers.create') }}" class="btn btn-primary">
+    <a href="{{ route('kasir.customers.create') }}" class="btn btn-primary">
         <i class="ti ti-plus"></i>
         Tambah Customer
     </a>
@@ -79,7 +79,7 @@
                                             @endif
                                         </td>
                                         <td>
-                                            <form action="{{ route('admin.customers.toggle-status', $customer) }}" method="POST" class="d-inline">
+                                            <form action="{{ route('kasir.customers.toggle-status', $customer) }}" method="POST" class="d-inline">
                                                 @csrf
                                                 @method('PATCH')
                                                 <button type="submit" class="btn btn-sm {{ $customer->status === 'active' ? 'btn-success' : 'btn-secondary' }}">
@@ -92,13 +92,13 @@
                                         </td>
                                         <td>
                                             <div class="btn-list flex-nowrap">
-                                                <a href="{{ route('admin.customers.show', $customer) }}" class="btn btn-sm btn-outline-primary" title="Detail">
+                                                <a href="{{ route('kasir.customers.show', $customer) }}" class="btn btn-sm btn-outline-primary" title="Detail">
                                                     <i class="ti ti-eye"></i>
                                                 </a>
-                                                <a href="{{ route('admin.customers.edit', $customer) }}" class="btn btn-sm btn-outline-warning" title="Edit">
+                                                <a href="{{ route('kasir.customers.edit', $customer) }}" class="btn btn-sm btn-outline-warning" title="Edit">
                                                     <i class="ti ti-edit"></i>
                                                 </a>
-                                                <form action="{{ route('admin.customers.destroy', $customer) }}" method="POST" class="d-inline delete-form">
+                                                <form action="{{ route('kasir.customers.destroy', $customer) }}" method="POST" class="d-inline delete-form">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="btn btn-sm btn-outline-danger" title="Hapus">
@@ -121,7 +121,7 @@
                                                     Mulai dengan menambahkan customer pertama Anda.
                                                 </p>
                                                 <div class="empty-action">
-                                                    <a href="{{ route('admin.customers.create') }}" class="btn btn-primary">
+                                                    <a href="{{ route('kasir.customers.create') }}" class="btn btn-primary">
                                                         <i class="ti ti-plus"></i>
                                                         Tambah Customer
                                                     </a>

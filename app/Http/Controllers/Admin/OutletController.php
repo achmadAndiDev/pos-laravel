@@ -51,7 +51,7 @@ class OutletController extends Controller
         try {
             Outlet::create($request->all());
             
-            return redirect()->route('admin.outlets.index')
+            return redirect()->route('kasir.outlets.index')
                 ->with('success', 'Outlet berhasil ditambahkan!');
         } catch (\Exception $e) {
             return redirect()->back()
@@ -102,7 +102,7 @@ class OutletController extends Controller
         try {
             $outlet->update($request->all());
             
-            return redirect()->route('admin.outlets.index')
+            return redirect()->route('kasir.outlets.index')
                 ->with('success', 'Outlet berhasil diperbarui!');
         } catch (\Exception $e) {
             return redirect()->back()
@@ -125,7 +125,7 @@ class OutletController extends Controller
 
             $outlet->delete();
             
-            return redirect()->route('admin.outlets.index')
+            return redirect()->route('kasir.outlets.index')
                 ->with('success', 'Outlet berhasil dihapus!');
         } catch (\Exception $e) {
             return redirect()->back()

@@ -6,7 +6,7 @@
 @section('content')
 <div class="row">
     <div class="col-12">
-        <form action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('kasir.products.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="card">
                 <div class="card-header">
@@ -213,7 +213,7 @@
                 </div>
                 <div class="card-footer text-end">
                     <div class="d-flex">
-                        <a href="{{ route('admin.products.index') }}" class="btn btn-link">Batal</a>
+                        <a href="{{ route('kasir.products.index') }}" class="btn btn-link">Batal</a>
                         <button type="submit" class="btn btn-primary ms-auto">
                             <i class="ti ti-device-floppy"></i>
                             Simpan Produk

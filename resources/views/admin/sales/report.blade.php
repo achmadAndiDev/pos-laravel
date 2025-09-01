@@ -115,7 +115,7 @@
         <!-- Filter Card -->
         <div class="card filter-card mb-4 no-print">
             <div class="card-body">
-                <form method="GET" action="{{ route('admin.sales.report') }}" id="filterForm">
+                <form method="GET" action="{{ route('kasir.sales.report') }}" id="filterForm">
                     <div class="row g-3">
                         <div class="col-md-2">
                             <label class="form-label text-white">Outlet</label>
@@ -314,7 +314,7 @@
                             </td>
                             <td class="no-print">
                                 <div class="btn-list flex-nowrap">
-                                    <a href="{{ route('admin.sales.show', $sale) }}" class="btn btn-sm btn-outline-primary">
+                                    <a href="{{ route('kasir.sales.show', $sale) }}" class="btn btn-sm btn-outline-primary">
                                         <i class="ti ti-eye"></i>
                                     </a>
                                 </div>

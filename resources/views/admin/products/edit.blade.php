@@ -6,7 +6,7 @@
 @section('content')
 <div class="row">
     <div class="col-12">
-        <form action="{{ route('admin.products.update', $product) }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('kasir.products.update', $product) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
             <div class="card">
@@ -222,7 +222,7 @@
                 </div>
                 <div class="card-footer text-end">
                     <div class="d-flex">
-                        <a href="{{ route('admin.products.index') }}" class="btn btn-link">Batal</a>
+                        <a href="{{ route('kasir.products.index') }}" class="btn btn-link">Batal</a>
                         <button type="submit" class="btn btn-primary ms-auto">
                             <i class="ti ti-device-floppy"></i>
                             Update Produk
@@ -240,7 +240,7 @@
     // Delete image function
     function deleteImage() {
         if (confirm('Apakah Anda yakin ingin menghapus gambar ini?')) {
-            fetch(`{{ route('admin.products.delete-image', $product) }}`, {
+            fetch(`{{ route('kasir.products.delete-image', $product) }}`, {
                 method: 'DELETE',
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),

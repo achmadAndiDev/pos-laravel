@@ -5,11 +5,11 @@
 
 @section('right-header')
 <div class="btn-list">
-    <a href="{{ route('admin.purchases.show', $purchase) }}" class="btn btn-outline-info">
+    <a href="{{ route('kasir.purchases.show', $purchase) }}" class="btn btn-outline-info">
         <i class="ti ti-eye"></i>
         Lihat Detail
     </a>
-    <a href="{{ route('admin.purchases.index') }}" class="btn btn-outline-secondary">
+    <a href="{{ route('kasir.purchases.index') }}" class="btn btn-outline-secondary">
         <i class="ti ti-arrow-left"></i>
         Kembali
     </a>
@@ -17,7 +17,7 @@
 @endsection
 
 @section('content')
-<form action="{{ route('admin.purchases.update', $purchase) }}" method="POST" id="purchaseForm">
+<form action="{{ route('kasir.purchases.update', $purchase) }}" method="POST" id="purchaseForm">
     @csrf
     @method('PUT')
     <div class="row">

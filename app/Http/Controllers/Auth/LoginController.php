@@ -39,7 +39,7 @@ class LoginController extends Controller
                 ])->onlyInput('email');
             }
 
-            return redirect()->intended(route('admin.dashboard'));
+            return redirect()->intended(route('kasir.dashboard'));
         }
 
         return back()->withErrors([

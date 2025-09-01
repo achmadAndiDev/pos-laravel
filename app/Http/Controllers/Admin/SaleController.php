@@ -132,7 +132,7 @@ class SaleController extends Controller
             });
 
             $message = $request->has('complete_sale') ? 'Penjualan berhasil dibuat dan diselesaikan' : 'Penjualan berhasil dibuat';
-            return redirect()->route('admin.sales.index')
+            return redirect()->route('kasir.sales.index')
                 ->with('success', $message);
         } catch (\Exception $e) {
             return redirect()->back()
@@ -157,7 +157,7 @@ class SaleController extends Controller
     public function edit(Sale $sale)
     {
         if (!$sale->canBeEdited()) {
-            return redirect()->route('admin.sales.index')
+            return redirect()->route('kasir.sales.index')
                 ->with('error', 'Penjualan tidak dapat diedit');
         }
 
@@ -174,7 +174,7 @@ class SaleController extends Controller
     public function update(Request $request, Sale $sale)
     {
         if (!$sale->canBeEdited()) {
-            return redirect()->route('admin.sales.index')
+            return redirect()->route('kasir.sales.index')
                 ->with('error', 'Penjualan tidak dapat diedit');
         }
 
@@ -237,7 +237,7 @@ class SaleController extends Controller
             });
 
             $message = $request->has('complete_sale') ? 'Penjualan berhasil diperbarui dan diselesaikan' : 'Penjualan berhasil diperbarui';
-            return redirect()->route('admin.sales.index')
+            return redirect()->route('kasir.sales.index')
                 ->with('success', $message);
         } catch (\Exception $e) {
             return redirect()->back()
@@ -252,17 +252,17 @@ class SaleController extends Controller
     public function destroy(Sale $sale)
     {
         if ($sale->status === 'completed') {
-            return redirect()->route('admin.sales.index')
+            return redirect()->route('kasir.sales.index')
                 ->with('error', 'Penjualan yang sudah selesai tidak dapat dihapus');
         }
 
         try {
             $sale->delete();
             
-            return redirect()->route('admin.sales.index')
+            return redirect()->route('kasir.sales.index')
                 ->with('success', 'Penjualan berhasil dihapus');
         } catch (\Exception $e) {
-            return redirect()->route('admin.sales.index')
+            return redirect()->route('kasir.sales.index')
                 ->with('error', 'Gagal menghapus penjualan: ' . $e->getMessage());
         }
     }
@@ -273,15 +273,15 @@ class SaleController extends Controller
     public function complete(Sale $sale)
     {
         if (!$sale->canBeCompleted()) {
-            return redirect()->route('admin.sales.index')
+            return redirect()->route('kasir.sales.index')
                 ->with('error', 'Penjualan tidak dapat diselesaikan');
         }
 
         if ($sale->complete()) {
-            return redirect()->route('admin.sales.index')
+            return redirect()->route('kasir.sales.index')
                 ->with('success', 'Penjualan berhasil diselesaikan');
         } else {
-            return redirect()->route('admin.sales.index')
+            return redirect()->route('kasir.sales.index')
                 ->with('error', 'Gagal menyelesaikan penjualan');
         }
     }
@@ -292,10 +292,10 @@ class SaleController extends Controller
     public function cancel(Sale $sale)
     {
         if ($sale->cancel()) {
-            return redirect()->route('admin.sales.index')
+            return redirect()->route('kasir.sales.index')
                 ->with('success', 'Penjualan berhasil dibatalkan');
         } else {
-            return redirect()->route('admin.sales.index')
+            return redirect()->route('kasir.sales.index')
                 ->with('error', 'Gagal membatalkan penjualan');
         }
     }

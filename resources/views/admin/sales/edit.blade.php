@@ -5,7 +5,7 @@
 
 @section('right-header')
 <div class="btn-list">
-    <a href="{{ route('admin.sales.show', $sale) }}" class="btn btn-outline-secondary">
+    <a href="{{ route('kasir.sales.show', $sale) }}" class="btn btn-outline-secondary">
         <i class="ti ti-arrow-left"></i>
         Kembali
     </a>
@@ -13,7 +13,7 @@
 @endsection
 
 @section('content')
-<form action="{{ route('admin.sales.update', $sale) }}" method="POST" id="saleForm">
+<form action="{{ route('kasir.sales.update', $sale) }}" method="POST" id="saleForm">
     @csrf
     @method('PUT')
     <div class="row">

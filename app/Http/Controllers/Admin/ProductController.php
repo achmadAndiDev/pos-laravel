@@ -85,7 +85,7 @@ class ProductController extends Controller
 
             Product::create($data);
             
-            return redirect()->route('admin.products.index')
+            return redirect()->route('kasir.products.index')
                 ->with('success', 'Produk berhasil ditambahkan!');
         } catch (\Exception $e) {
             return redirect()->back()
@@ -162,7 +162,7 @@ class ProductController extends Controller
 
             $product->update($data);
             
-            return redirect()->route('admin.products.index')
+            return redirect()->route('kasir.products.index')
                 ->with('success', 'Produk berhasil diperbarui!');
         } catch (\Exception $e) {
             return redirect()->back()
@@ -184,7 +184,7 @@ class ProductController extends Controller
 
             $product->delete();
             
-            return redirect()->route('admin.products.index')
+            return redirect()->route('kasir.products.index')
                 ->with('success', 'Produk berhasil dihapus!');
         } catch (\Exception $e) {
             return redirect()->back()

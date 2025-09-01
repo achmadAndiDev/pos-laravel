@@ -5,7 +5,7 @@
 
 @section('right-header')
 <div class="btn-list">
-    <a href="{{ route('admin.sales.create') }}" class="btn btn-primary">
+    <a href="{{ route('kasir.sales.create') }}" class="btn btn-primary">
         <i class="ti ti-plus"></i>
         Tambah Penjualan
     </a>
@@ -16,7 +16,7 @@
 <!-- Filter Card -->
 <div class="card mb-3">
     <div class="card-body">
-        <form method="GET" action="{{ route('admin.sales.index') }}">
+        <form method="GET" action="{{ route('kasir.sales.index') }}">
             <div class="row">
                 <div class="col-md-3">
                     <div class="mb-3">
@@ -67,7 +67,7 @@
                             <button type="submit" class="btn btn-primary">
                                 <i class="ti ti-search"></i>
                             </button>
-                            <a href="{{ route('admin.sales.index') }}" class="btn btn-outline-secondary">
+                            <a href="{{ route('kasir.sales.index') }}" class="btn btn-outline-secondary">
                                 <i class="ti ti-x"></i>
                             </a>
                         </div>
@@ -116,18 +116,18 @@
                         </td>
                         <td>
                             <div class="btn-list flex-nowrap">
-                                <a href="{{ route('admin.sales.show', $sale) }}" class="btn btn-sm btn-outline-primary">
+                                <a href="{{ route('kasir.sales.show', $sale) }}" class="btn btn-sm btn-outline-primary">
                                     <i class="ti ti-eye"></i>
                                 </a>
                                 
                                 @if($sale->canBeEdited())
-                                    <a href="{{ route('admin.sales.edit', $sale) }}" class="btn btn-sm btn-outline-warning">
+                                    <a href="{{ route('kasir.sales.edit', $sale) }}" class="btn btn-sm btn-outline-warning">
                                         <i class="ti ti-edit"></i>
                                     </a>
                                 @endif
 
                                 @if($sale->canBeCompleted())
-                                    <form action="{{ route('admin.sales.complete', $sale) }}" method="POST" class="d-inline">
+                                    <form action="{{ route('kasir.sales.complete', $sale) }}" method="POST" class="d-inline">
                                         @csrf
                                         <button type="submit" class="btn btn-sm btn-outline-success" 
                                                 onclick="return confirm('Yakin ingin menyelesaikan penjualan ini?')">
@@ -144,7 +144,7 @@
                                         <ul class="dropdown-menu">
                                             @if($sale->status === 'draft')
                                                 <li>
-                                                    <form action="{{ route('admin.sales.cancel', $sale) }}" method="POST">
+                                                    <form action="{{ route('kasir.sales.cancel', $sale) }}" method="POST">
                                                         @csrf
                                                         <button type="submit" class="dropdown-item text-danger" 
                                                                 onclick="return confirm('Yakin ingin membatalkan penjualan ini?')">
@@ -155,7 +155,7 @@
                                             @endif
                                             @if($sale->status !== 'completed')
                                                 <li>
-                                                    <form action="{{ route('admin.sales.destroy', $sale) }}" method="POST">
+                                                    <form action="{{ route('kasir.sales.destroy', $sale) }}" method="POST">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit" class="dropdown-item text-danger" 

@@ -64,10 +64,10 @@
             </div>
             <div class="card-footer">
                 <div class="d-flex gap-2">
-                    <a href="{{ route('admin.profile.edit') }}" class="btn btn-primary">
+                    <a href="{{ route('kasir.profile.edit') }}" class="btn btn-primary">
                         <i class="bi bi-pencil me-2"></i>Edit Profil
                     </a>
-                    <a href="{{ route('admin.profile.password') }}" class="btn btn-outline-primary">
+                    <a href="{{ route('kasir.profile.password') }}" class="btn btn-outline-primary">
                         <i class="bi bi-key me-2"></i>Ubah Password
                     </a>
                 </div>

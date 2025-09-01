@@ -5,7 +5,7 @@
 
 @section('right-header')
 <div class="btn-list">
-    <a href="{{ route('admin.purchases.create') }}" class="btn btn-primary">
+    <a href="{{ route('kasir.purchases.create') }}" class="btn btn-primary">
         <i class="ti ti-plus"></i>
         Tambah Pembelian
     </a>
@@ -75,11 +75,11 @@
                                 </td>
                                 <td>
                                     <div class="btn-list flex-nowrap">
-                                        <a href="{{ route('admin.purchases.show', $purchase) }}" class="btn btn-sm btn-outline-info">
+                                        <a href="{{ route('kasir.purchases.show', $purchase) }}" class="btn btn-sm btn-outline-info">
                                             <i class="ti ti-eye"></i>
                                         </a>
                                         @if($purchase->canBeEdited())
-                                            <a href="{{ route('admin.purchases.edit', $purchase) }}" class="btn btn-sm btn-outline-warning">
+                                            <a href="{{ route('kasir.purchases.edit', $purchase) }}" class="btn btn-sm btn-outline-warning">
                                                 <i class="ti ti-edit"></i>
                                             </a>
                                         @endif
@@ -90,7 +90,7 @@
                                             <ul class="dropdown-menu">
                                                 @if($purchase->canBeCompleted())
                                                     <li>
-                                                        <form action="{{ route('admin.purchases.complete', $purchase) }}" method="POST" class="d-inline complete-form">
+                                                        <form action="{{ route('kasir.purchases.complete', $purchase) }}" method="POST" class="d-inline complete-form">
                                                             @csrf
                                                             <button type="submit" class="dropdown-item text-success">
                                                                 <i class="ti ti-check me-2"></i>
@@ -101,7 +101,7 @@
                                                 @endif
                                                 @if($purchase->status === 'draft')
                                                     <li>
-                                                        <form action="{{ route('admin.purchases.cancel', $purchase) }}" method="POST" class="d-inline cancel-form">
+                                                        <form action="{{ route('kasir.purchases.cancel', $purchase) }}" method="POST" class="d-inline cancel-form">
                                                             @csrf
                                                             <button type="submit" class="dropdown-item text-warning">
                                                                 <i class="ti ti-x me-2"></i>
@@ -113,7 +113,7 @@
                                                 @if($purchase->status !== 'completed')
                                                     <li><hr class="dropdown-divider"></li>
                                                     <li>
-                                                        <form action="{{ route('admin.purchases.destroy', $purchase) }}" method="POST" class="d-inline delete-form">
+                                                        <form action="{{ route('kasir.purchases.destroy', $purchase) }}" method="POST" class="d-inline delete-form">
                                                             @csrf
                                                             @method('DELETE')
                                                             <button type="submit" class="dropdown-item text-danger">
@@ -140,7 +140,7 @@
                                             Klik tombol "Tambah Pembelian" untuk menambahkan pembelian pertama.
                                         </p>
                                         <div class="empty-action">
-                                            <a href="{{ route('admin.purchases.create') }}" class="btn btn-primary">
+                                            <a href="{{ route('kasir.purchases.create') }}" class="btn btn-primary">
                                                 <i class="ti ti-plus"></i>
                                                 Tambah Pembelian
                                             </a>

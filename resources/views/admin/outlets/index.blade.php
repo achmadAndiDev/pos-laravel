@@ -5,7 +5,7 @@
 
 @section('right-header')
 <div class="btn-list">
-    <a href="{{ route('admin.outlets.create') }}" class="btn btn-primary">
+    <a href="{{ route('kasir.outlets.create') }}" class="btn btn-primary">
         <i class="ti ti-plus"></i>
         Tambah Outlet
     </a>
@@ -61,7 +61,7 @@
                                 </td>
                                 <td>{{ $outlet->manager ?? '-' }}</td>
                                 <td>
-                                    <form action="{{ route('admin.outlets.toggle-status', $outlet) }}" method="POST" class="d-inline">
+                                    <form action="{{ route('kasir.outlets.toggle-status', $outlet) }}" method="POST" class="d-inline">
                                         @csrf
                                         @method('PATCH')
                                         <button type="submit" class="btn btn-sm {{ $outlet->status === 'active' ? 'btn-success' : 'btn-secondary' }}">
@@ -74,13 +74,13 @@
                                 </td>
                                 <td>
                                     <div class="btn-list flex-nowrap">
-                                        <a href="{{ route('admin.outlets.show', $outlet) }}" class="btn btn-sm btn-outline-primary">
+                                        <a href="{{ route('kasir.outlets.show', $outlet) }}" class="btn btn-sm btn-outline-primary">
                                             <i class="ti ti-eye"></i>
                                         </a>
-                                        <a href="{{ route('admin.outlets.edit', $outlet) }}" class="btn btn-sm btn-outline-warning">
+                                        <a href="{{ route('kasir.outlets.edit', $outlet) }}" class="btn btn-sm btn-outline-warning">
                                             <i class="ti ti-edit"></i>
                                         </a>
-                                        <form action="{{ route('admin.outlets.destroy', $outlet) }}" method="POST" class="d-inline delete-form">
+                                        <form action="{{ route('kasir.outlets.destroy', $outlet) }}" method="POST" class="d-inline delete-form">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-sm btn-outline-danger">
@@ -101,7 +101,7 @@
                                             Mulai dengan menambahkan outlet pertama Anda.
                                         </p>
                                         <div class="empty-action">
-                                            <a href="{{ route('admin.outlets.create') }}" class="btn btn-primary">
+                                            <a href="{{ route('kasir.outlets.create') }}" class="btn btn-primary">
                                                 <i class="ti ti-plus"></i>
                                                 Tambah Outlet
                                             </a>

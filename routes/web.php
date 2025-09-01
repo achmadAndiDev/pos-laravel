@@ -21,16 +21,23 @@ Route::middleware('web')->group(function () {
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 });
 
-Route::get('/', [DashboardController::class, 'index'])->middleware('auth');
+// Public landing page
+Route::get('/', function () {
+    return view('landing');
+})->name('landing');
 
-// Admin Routes
-Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
+// Kasir Routes
+Route::prefix('kasir')->name('kasir.')->middleware('auth')->group(function () {
     // Dashboard
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard', [DashboardController::class, 'index']);
 
     // Outlet selection (session-based)
     Route::post('/select-outlet', [OutletSelectionController::class, 'store'])->name('select-outlet');
+
+    // Profile - Change Password
+    Route::get('/profile/password', [\App\Http\Controllers\Admin\ProfileController::class, 'editPassword'])->name('profile.password.edit');
+    Route::put('/profile/password', [\App\Http\Controllers\Admin\ProfileController::class, 'updatePassword'])->name('profile.password.update');
 
     // Users
     Route::resource('users', UserController::class);

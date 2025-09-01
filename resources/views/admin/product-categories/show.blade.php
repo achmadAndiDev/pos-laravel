@@ -5,11 +5,11 @@
 
 @section('right-header')
 <div class="btn-list">
-    <a href="{{ route('admin.product-categories.edit', $productCategory) }}" class="btn btn-warning">
+    <a href="{{ route('kasir.product-categories.edit', $productCategory) }}" class="btn btn-warning">
         <i class="ti ti-edit"></i>
         Edit
     </a>
-    <a href="{{ route('admin.product-categories.index') }}" class="btn btn-outline-secondary">
+    <a href="{{ route('kasir.product-categories.index') }}" class="btn btn-outline-secondary">
         <i class="ti ti-arrow-left"></i>
         Kembali
     </a>

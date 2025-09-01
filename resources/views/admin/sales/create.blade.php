@@ -5,7 +5,7 @@
 
 @section('right-header')
 <div class="btn-list">
-    <a href="{{ route('admin.sales.index') }}" class="btn btn-outline-secondary">
+    <a href="{{ route('kasir.sales.index') }}" class="btn btn-outline-secondary">
         <i class="ti ti-arrow-left"></i>
         Kembali
     </a>
@@ -13,7 +13,7 @@
 @endsection
 
 @section('content')
-<form action="{{ route('admin.sales.store') }}" method="POST" id="saleForm">
+<form action="{{ route('kasir.sales.store') }}" method="POST" id="saleForm">
     @csrf
     <div class="row">
         <!-- Left Panel - Product Selection & Items -->

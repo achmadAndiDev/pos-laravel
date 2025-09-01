@@ -6,12 +6,12 @@
 @section('right-header')
 <div class="btn-list">
   @if(auth()->user()->hasPermission('users.edit'))
-  <a href="{{ route('admin.users.edit', $user) }}" class="btn btn-primary">
+  <a href="{{ route('kasir.users.edit', $user) }}" class="btn btn-primary">
     <i class="ti ti-edit"></i>
     Edit User
   </a>
   @endif
-  <a href="{{ route('admin.users.index') }}" class="btn btn-outline-secondary">
+  <a href="{{ route('kasir.users.index') }}" class="btn btn-outline-secondary">
     <i class="ti ti-arrow-left"></i>
     Kembali
   </a>
@@ -58,7 +58,7 @@
         </div>
         @if(auth()->user()->hasPermission('users.edit') && !$user->isSuperAdmin() && $user->id !== auth()->id())
         <div class="btn-list">
-          <form action="{{ route('admin.users.toggle-status', $user) }}" method="POST" class="d-inline">
+          <form action="{{ route('kasir.users.toggle-status', $user) }}" method="POST" class="d-inline">
             @csrf
             @method('PATCH')
             <button type="submit" class="btn btn-sm {{ $user->is_active ? 'btn-warning' : 'btn-success' }}" onclick="return confirm('Yakin ingin {{ $user->is_active ? 'menonaktifkan' : 'mengaktifkan' }} user ini?')">

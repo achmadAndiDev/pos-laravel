@@ -435,7 +435,7 @@
         formData.append('format', format);
         
         const params = new URLSearchParams(formData);
-        window.open(`{{ route('admin.sales-calculation.export') }}?${params.toString()}`, '_blank');
+        window.open(`{{ route('kasir.sales-calculation.export') }}?${params.toString()}`, '_blank');
     }
 
     // Refresh data
