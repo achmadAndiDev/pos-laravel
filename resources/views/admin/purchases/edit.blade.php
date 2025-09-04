@@ -299,7 +299,7 @@ $(document).ready(function() {
     // Load products via AJAX
     function loadProducts(outletId) {
         $.ajax({
-            url: '{{ route("admin.purchases.products-by-outlet") }}',
+            url: '{{ route("kasir.purchases.products-by-outlet") }}',
             method: 'GET',
             data: { outlet_id: outletId },
             success: function(response) {

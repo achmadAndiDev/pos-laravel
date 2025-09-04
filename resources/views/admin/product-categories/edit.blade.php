@@ -169,7 +169,7 @@ function deleteCurrentImage() {
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: '{{ route("admin.product-categories.delete-image", $productCategory) }}',
+                url: '{{ route("kasir.product-categories.delete-image", $productCategory) }}',
                 type: 'DELETE',
                 data: {
                     _token: '{{ csrf_token() }}'

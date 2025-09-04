@@ -336,7 +336,7 @@ $(document).ready(function() {
     // Load products via AJAX
     function loadProducts(outletId) {
         $.ajax({
-            url: '{{ route("admin.sales.products-by-outlet") }}',
+            url: '{{ route("kasir.sales.products-by-outlet") }}',
             method: 'GET',
             data: { outlet_id: outletId },
             success: function(response) {

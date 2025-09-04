@@ -320,7 +320,7 @@
         const params = new URLSearchParams(formData);
         
         // Redirect to PDF export with current filters
-        window.open('{{ route("admin.purchases.export-pdf") }}?' + params.toString(), '_blank');
+        window.open('{{ route("kasir.purchases.export-pdf") }}?' + params.toString(), '_blank');
     }
 
     function printReport() {
@@ -330,7 +330,7 @@
         const params = new URLSearchParams(formData);
         
         // Open print view in new window
-        const printWindow = window.open('{{ route("admin.purchases.print-report") }}?' + params.toString(), '_blank');
+        const printWindow = window.open('{{ route("kasir.purchases.print-report") }}?' + params.toString(), '_blank');
         printWindow.focus();
     }
 
