@@ -347,7 +347,7 @@ function sendToWhatsApp() {
     button.innerHTML = '<i class="ti ti-loader-2 ti-spin"></i> Mengirim...';
     button.disabled = true;
     
-    fetch(`/admin/sales/${saleId}/send-whatsapp`, {
+    fetch(`/kasir/sales/${saleId}/send-whatsapp`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -387,7 +387,7 @@ function printThermal() {
     button.innerHTML = '<i class="ti ti-loader-2 ti-spin"></i> Memproses...';
     button.disabled = true;
     
-    fetch(`/admin/sales/${saleId}/thermal-receipt`, {
+    fetch(`/kasir/sales/${saleId}/thermal-receipt`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
